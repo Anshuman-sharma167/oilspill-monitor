@@ -23,6 +23,25 @@ secrets.yml
 *signed-url*
 *signed_url*
 
+# Credentials and local-service configuration
+.npmrc
+.pypirc
+.netrc
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+client-secret*.json
+client_secret*.json
+service-account*.json
+service_account*.json
+kubeconfig
+.kube/
+.aws/
+.azure/
+.config/gcloud/
+supabase/.temp/
+
 # Dependencies, caches, logs, and build output
 node_modules/
 .npm/
