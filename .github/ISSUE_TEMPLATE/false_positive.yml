@@ -1,0 +1,29 @@
+name: False positive report
+description:
+  Report a safe, reproducible look-alike behavior in public code or synthetic
+  fixtures.
+title: "[False positive]: "
+labels: ["false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value:
+        "A public issue is not a reviewer record. Do not include operational
+        coordinates, scene exports, private imagery, or review evidence. Use
+        synthetic or publicly redistributable material only."
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Candidate behavior
+      description:
+        Explain why the output appears to be a look-alike without claiming
+        official ground truth.
+    validations:
+      required: true
+  - type: textarea
+    id: safe_reproduction
+    attributes:
+      label: Safe reproduction
+      description: Provide code or a synthetic fixture reference only.
+    validations:
+      required: true

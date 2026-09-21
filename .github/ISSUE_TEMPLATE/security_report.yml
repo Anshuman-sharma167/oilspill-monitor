@@ -1,0 +1,21 @@
+name: Security report
+description:
+  Read the private reporting process; do not disclose vulnerabilities here.
+title: "[Security]: Do not submit sensitive details"
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value:
+        "Do not open a public issue containing vulnerability details. Follow
+        SECURITY.md: use GitHub private vulnerability reporting if enabled, or
+        privately ask the maintainer for a secure reporting channel."
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Private reporting
+      options:
+        - label:
+            I will follow SECURITY.md and will not put sensitive details in this
+            public form.
+          required: true

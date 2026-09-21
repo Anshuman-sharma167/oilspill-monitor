@@ -1,0 +1,26 @@
+name: Missed candidate report
+description: Report safe, reproducible candidate-screening behavior.
+title: "[Missed candidate]: "
+labels: ["missed-candidate"]
+body:
+  - type: markdown
+    attributes:
+      value:
+        "Do not disclose operational coordinates, private scene data, reviewer
+        evidence, or allegations. A missed candidate is not proof of an oil
+        spill."
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description:
+        Describe the behavior with synthetic or publicly redistributable
+        material.
+    validations:
+      required: true
+  - type: textarea
+    id: expectation
+    attributes:
+      label: Expected candidate behavior
+    validations:
+      required: true

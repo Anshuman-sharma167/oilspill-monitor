@@ -1,0 +1,10 @@
+oilspill-monitor
+Copyright 2026 oilspill-monitor contributors
+
+The Apache License 2.0 applies only to original project code and documentation
+included in this repository unless a file states otherwise.
+
+Datasets, satellite products, external models, and trained weights are not
+included. They may be governed by separate licences, access terms, attribution
+requirements, and redistribution limits. Inclusion in a future workflow must
+follow a documented licence review; this NOTICE does not grant rights to them.

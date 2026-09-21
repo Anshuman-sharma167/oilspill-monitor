@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use the public code scaffold, cite it using this metadata."
+title: "oilspill-monitor"
+type: software
+authors:
+  - name: "oilspill-monitor contributors"
+version: 0.1.0
+date-released: 2026-09-21
+license: Apache-2.0
+abstract:
+  "A public-code scaffold for a private-data, human-reviewed Sentinel-1 oil-like
+  slick candidate monitor."

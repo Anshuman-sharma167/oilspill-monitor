@@ -1,0 +1,31 @@
+name: Dataset problem
+description: Report a public dataset licence, provenance, or handling concern.
+title: "[Dataset]: "
+labels: ["dataset"]
+body:
+  - type: markdown
+    attributes:
+      value:
+        "Do not upload data, private links, operational coordinates, or reviewer
+        evidence. Identify a public source page when safe."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description:
+        Describe the licence, provenance, redistribution, quality, or
+        documentation issue.
+    validations:
+      required: true
+  - type: input
+    id: public_reference
+    attributes:
+      label: Public reference
+      description:
+        Optional public documentation URL; do not provide a signed URL.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact on the project
+    validations:
+      required: true

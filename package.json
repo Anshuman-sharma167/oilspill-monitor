@@ -1,0 +1,36 @@
+{
+  "name": "oilspill-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public-code scaffold for a private-data, human-reviewed oil-like slick candidate monitor",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "sample": "tsx scripts/sample.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/unit/*.test.ts",
+    "scan:repo": "node scripts/scan-repository.mjs",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run sample && npm run scan:repo"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.6.2",
+    "eslint": "10.11.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.8",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0"
+  }
+}
