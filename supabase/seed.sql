@@ -1,0 +1,2 @@
+-- Part 3 intentionally contains no database seed data.
+-- Add only synthetic, non-sensitive fixture data in later parts.
