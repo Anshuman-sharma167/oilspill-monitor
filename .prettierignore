@@ -3,3 +3,6 @@ coverage/
 dist/
 LICENSE
 package-lock.json
+uv.lock
+.venv/
+build/

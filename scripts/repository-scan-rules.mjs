@@ -309,7 +309,11 @@ export const pathFindings = (path) => {
         "Remove the private-data, archive, database, key, or model file and keep it in approved private storage.",
     });
   }
-  if (forbiddenPaths.some((pattern) => pattern.test(normalized))) {
+  const isRootEnvironmentExample = normalized === ".env.example";
+  if (
+    !isRootEnvironmentExample &&
+    forbiddenPaths.some((pattern) => pattern.test(normalized))
+  ) {
     findings.push({
       name: "privacy.prohibited-path",
       remediation:

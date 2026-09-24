@@ -5,8 +5,10 @@
   "description": "Public-code scaffold for a private-data, human-reviewed oil-like slick candidate monitor",
   "license": "Apache-2.0",
   "type": "module",
+  "packageManager": "npm@11.12.1",
   "engines": {
-    "node": ">=22"
+    "node": "24.15.0",
+    "npm": "11.12.1"
   },
   "workspaces": [
     "apps/*",
@@ -14,14 +16,37 @@
     "packages/*"
   ],
   "scripts": {
+    "setup": "node scripts/task.mjs setup",
+    "setup:python": "node scripts/task.mjs setup-python",
+    "versions:check": "node scripts/task.mjs versions",
     "sample": "tsx scripts/sample.ts",
+    "integration:mock": "tsx scripts/mock-integration.ts",
+    "dashboard": "node scripts/task.mjs deferred dashboard",
+    "db:reset": "node scripts/task.mjs deferred database-reset",
+    "db:migrate": "node scripts/task.mjs deferred database-migration",
+    "docs:build": "node scripts/build-docs.mjs",
+    "types:generate": "node scripts/task.mjs deferred schema-type-generation",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:python": "node scripts/file-check.mjs python-format",
+    "format:sql": "node scripts/file-check.mjs sql-format",
     "lint": "eslint .",
+    "lint:python": "node scripts/file-check.mjs python-security",
     "typecheck": "tsc --noEmit",
+    "typecheck:python": "node scripts/file-check.mjs python-typecheck",
     "test": "tsx --test tests/unit/*.test.ts",
+    "test:part4": "tsx --test tests/unit/part4.test.ts",
     "scan:repo": "node scripts/scan-repository.mjs",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run sample && npm run scan:repo"
+    "scan:path": "node scripts/scan-path.mjs",
+    "check:config": "node scripts/check-config-boundary.mjs",
+    "check:container": "node scripts/validate-container.mjs",
+    "check:quality": "npm run format:check && npm run format:python && npm run format:sql && npm run lint && npm run lint:python && npm run typecheck && npm run typecheck:python && npm test && npm run sample && npm run integration:mock && npm run check:config && npm run check:container",
+    "check": "npm run check:quality && npm run scan:repo",
+    "precommit": "node scripts/task.mjs precommit",
+    "audit:node": "npm audit --audit-level=high",
+    "audit:python": "node scripts/task.mjs audit-python",
+    "audit": "npm run audit:node && npm run audit:python",
+    "verify:part4": "npm run check && npm run precommit && npm run audit"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

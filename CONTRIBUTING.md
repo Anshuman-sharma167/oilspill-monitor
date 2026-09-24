@@ -2,9 +2,10 @@
 
 ## Local setup
 
-Use Node.js 22 and install exactly from the lockfile with `npm ci`. Run
-`npm run check` before opening a pull request. The individual checks are
-documented in the README.
+Use Node.js 24.15.0, npm 11.12.1, and Python 3.13.7. Run `npm run setup` to
+install exactly from the Node and Python lockfiles without training
+dependencies. Run `npm run check` and `npm run precommit` before opening a pull
+request. The individual checks are documented in the README.
 
 Keep changes within the current implementation part. Empty provider directories
 are boundaries, not permission to configure services.

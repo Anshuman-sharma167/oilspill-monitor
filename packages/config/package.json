@@ -1,0 +1,10 @@
+{
+  "name": "@oilspill-monitor/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./browser": "./src/browser.ts",
+    "./server": "./src/server.ts"
+  }
+}
