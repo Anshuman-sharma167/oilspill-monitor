@@ -1,0 +1,31 @@
+minimum_pre_commit_version: "4.6.2"
+repos:
+  - repo: local
+    hooks:
+      - id: python-format
+        name: Python formatting
+        entry: node scripts/file-check.mjs python-format --paths
+        language: system
+        files: \.py$
+      - id: python-typecheck
+        name: Python type checking
+        entry: node scripts/file-check.mjs python-typecheck --paths
+        language: system
+        files: \.py$
+      - id: typescript-lint
+        name: TypeScript linting
+        entry: npm run lint -- --no-warn-ignored
+        language: system
+        files: \.[cm]?[jt]sx?$
+        pass_filenames: false
+      - id: sql-format
+        name: SQL formatting
+        entry: node scripts/file-check.mjs sql-format --paths
+        language: system
+        files: \.sql$
+      - id: repository-security-scan
+        name: Repository secret, privacy, history, and large-file scan
+        entry: npm run scan:repo
+        language: system
+        pass_filenames: false
+        always_run: true

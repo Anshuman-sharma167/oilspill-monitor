@@ -2,6 +2,7 @@
 .env
 .env.*
 *.env
+!.env.example
 *credentials*
 *credential*
 *.secret
@@ -53,6 +54,8 @@ build/
 out/
 tmp/
 temp/
+.part4-tmp/
+.venv/
 *.log
 *.tsbuildinfo
 

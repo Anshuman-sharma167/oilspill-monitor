@@ -13,11 +13,11 @@ external alert or conclusion.
 
 ## Scope and exclusions
 
-This Part 3 scaffold provides shared TypeScript types, a deterministic sample
-command, local quality checks, documentation, and continuous-integration
-definitions. It does not implement the dashboard, scene discovery, worker
-processing, database, openEO access, Cloudflare R2 storage, model downloads,
-deployment, or production services.
+The Part 4 environment layer preserves the Part 3 scaffold, shared types,
+deterministic sample command, local quality checks, documentation, and
+continuous-integration definitions. It does not implement the dashboard, scene
+discovery, worker processing, database, openEO access, Cloudflare R2 storage,
+model downloads, deployment, or production services.
 
 Only original project code is licensed under Apache-2.0. Datasets, satellite
 products, external models, and trained weights are excluded from this repository
@@ -35,10 +35,11 @@ coordinate, reviewer record, or historical baseline.
 
 ## Setup
 
-Install Node.js 22 and dependencies from the committed lockfile:
+Install Node.js 24.15.0, npm 11.12.1, and Python 3.13.7, then install both
+dependency sets from their committed lockfiles:
 
 ```console
-npm ci
+npm run setup
 ```
 
 Run the deterministic sample, which needs no network access, credentials,
@@ -54,8 +55,14 @@ Run every local validation:
 npm run check
 ```
 
-Individual commands are `npm run format:check`, `npm run lint`,
-`npm run typecheck`, `npm test`, `npm run sample`, and `npm run scan:repo`.
+The unified command surface is `npm run setup`, `npm run check`,
+`npm run sample`, `npm run dashboard`, `npm run db:reset`, `npm run db:migrate`,
+and `npm run docs:build`. Dashboard and database commands return an intentional
+later-part prerequisite result. The mock integration path is
+`npm run integration:mock` and needs no network or secret. See
+[`docs/operations/reproducible-environments.md`](docs/operations/reproducible-environments.md)
+and
+[`docs/operations/secret-storage-and-rotation.md`](docs/operations/secret-storage-and-rotation.md).
 
 ## Directory structure
 

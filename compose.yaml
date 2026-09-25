@@ -1,0 +1,15 @@
+name: oilspill-monitor-local
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid,nodev
+    restart: "no"

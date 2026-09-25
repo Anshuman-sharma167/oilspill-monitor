@@ -1,0 +1,41 @@
+[project]
+name = "oilspill-monitor-environment"
+version = "0.1.0"
+description = "Local Python tooling boundary for oilspill-monitor"
+requires-python = "==3.13.*"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "bandit==1.9.4",
+  "black==26.5.1",
+  "mypy==1.20.2",
+  "pip-audit==2.10.1",
+  "pre-commit==4.6.2",
+  "pytest==9.1.1",
+  "sqlfluff==4.3.0",
+  "uv==0.12.18",
+]
+training = []
+
+[tool.uv]
+required-version = "==0.12.18"
+package = false
+
+[tool.black]
+target-version = ["py313"]
+line-length = 88
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+
+[tool.bandit]
+exclude_dirs = [".venv", "build", "node_modules"]
+
+[tool.sqlfluff.core]
+dialect = "postgres"
+max_line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

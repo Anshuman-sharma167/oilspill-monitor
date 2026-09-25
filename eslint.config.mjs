@@ -4,7 +4,14 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["coverage/", "dist/", "node_modules/"],
+    ignores: [
+      "coverage/",
+      "dist/",
+      "node_modules/",
+      ".venv/",
+      "build/",
+      ".part4-tmp/",
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
