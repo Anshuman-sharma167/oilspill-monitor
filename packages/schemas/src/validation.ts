@@ -148,20 +148,87 @@ const validateNode = (rule: JsonSchema, value: unknown, path: string): void => {
   }
 };
 
-const ringsFromGeometry = (geometry: Record<string, unknown>): unknown[][] => {
+type Position = [number, number];
+type LinearRing = Position[];
+
+const polygonsFromGeometry = (
+  geometry: Record<string, unknown>,
+): LinearRing[][] => {
   const coordinates = geometry.coordinates;
   if (!Array.isArray(coordinates)) return [];
-  if (geometry.type === "Polygon") return coordinates as unknown[][];
-  return (coordinates as unknown[][]).flat() as unknown[][];
+  if (geometry.type === "Polygon") return [coordinates as LinearRing[]];
+  return coordinates as LinearRing[][];
+};
+
+const signedArea = (ring: LinearRing): number =>
+  ring.slice(0, -1).reduce((area, point, index) => {
+    const next = ring[index + 1];
+    return next === undefined
+      ? area
+      : area + point[0] * next[1] - next[0] * point[1];
+  }, 0) / 2;
+
+const orientation = (a: Position, b: Position, c: Position): number =>
+  Math.sign((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]));
+
+const segmentsIntersect = (
+  a: Position,
+  b: Position,
+  c: Position,
+  d: Position,
+): boolean =>
+  orientation(a, b, c) !== orientation(a, b, d) &&
+  orientation(c, d, a) !== orientation(c, d, b);
+
+const ringSelfIntersects = (ring: LinearRing): boolean => {
+  const segmentCount = ring.length - 1;
+  for (let first = 0; first < segmentCount; first += 1) {
+    const a = ring[first];
+    const b = ring[first + 1];
+    if (a === undefined || b === undefined) continue;
+    for (let second = first + 1; second < segmentCount; second += 1) {
+      if (second === first + 1 || (first === 0 && second === segmentCount - 1))
+        continue;
+      const c = ring[second];
+      const d = ring[second + 1];
+      if (c !== undefined && d !== undefined && segmentsIntersect(a, b, c, d))
+        return true;
+    }
+  }
+  return false;
 };
 
 const validateGeometry = (value: Record<string, unknown>): void => {
-  for (const ring of ringsFromGeometry(value)) {
-    const first = ring[0];
-    const last = ring.at(-1);
-    if (JSON.stringify(first) !== JSON.stringify(last))
-      fail("$.geometry", "GeoJSON linear rings must be closed");
+  for (const polygon of polygonsFromGeometry(value)) {
+    polygon.forEach((ring, ringIndex) => {
+      const first = ring[0];
+      const last = ring.at(-1);
+      if (JSON.stringify(first) !== JSON.stringify(last))
+        fail("$.geometry", "GeoJSON linear rings must be closed");
+      const area = signedArea(ring);
+      if (area === 0) fail("$.geometry", "GeoJSON rings must not be empty");
+      if ((ringIndex === 0 && area < 0) || (ringIndex > 0 && area > 0))
+        fail("$.geometry", "GeoJSON rings must use right-hand-rule winding");
+      if (ringSelfIntersects(ring))
+        fail("$.geometry", "GeoJSON rings must not self-intersect");
+    });
   }
+};
+
+const validateAoiSemantics = (value: Record<string, unknown>): void => {
+  const validFrom = new Date(value.valid_from as string).valueOf();
+  const validTo = value.valid_to;
+  if (validTo !== null && new Date(validTo as string).valueOf() <= validFrom)
+    fail("$.valid_to", "must be later than valid_from");
+  if (
+    value.enabled === true &&
+    (value.cost_estimate_status !== "estimated" ||
+      value.approximate_openeo_credits === null)
+  )
+    fail(
+      "$.enabled",
+      "requires a recorded provider cost estimate before activation",
+    );
 };
 
 const validateJobSemantics = (value: Record<string, unknown>): void => {
@@ -225,8 +292,10 @@ export const validateContract = (
     throw new Error(`Unknown contract model ${modelName}`);
   validateNode(definition, value, "$");
   const record = value as Record<string, unknown>;
-  if (modelName === "AOI")
+  if (modelName === "AOI") {
     validateGeometry(record.geometry as Record<string, unknown>);
+    validateAoiSemantics(record);
+  }
   if (modelName === "Scene")
     validateGeometry(record.footprint as Record<string, unknown>);
   if (modelName === "Candidate")

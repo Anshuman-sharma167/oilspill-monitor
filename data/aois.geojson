@@ -1,0 +1,57 @@
+{
+  "type": "FeatureCollection",
+  "name": "oilspill-monitor-aois",
+  "quota_policy": {
+    "policy_version": "1.0.0",
+    "scheduled_percent": 60,
+    "retry_reprocessing_percent": 20,
+    "priority_emergency_percent": 20,
+    "p2_defer_at_total_percent": 80
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "aoi:western-coast-shadow-pilot",
+      "properties": {
+        "kind": "AOI",
+        "schema_version": "1.0.0",
+        "aoi_id": "aoi:western-coast-shadow-pilot",
+        "name": "Western-coast shadow pilot",
+        "external_crs": "EPSG:4326",
+        "enabled": false,
+        "priority": "P1",
+        "valid_from": "2026-10-01T00:00:00.000Z",
+        "valid_to": null,
+        "policy_version": "1.0.0",
+        "dry_run_month": "2025-01",
+        "estimated_scene_count": 13,
+        "approximate_openeo_credits": null,
+        "cost_estimate_status": "pending_provider_run",
+        "cost_estimate_method": "Copernicus Data Space STAC dry-run counted Sentinel-1 GRD items intersecting the pilot bounds. An authenticated openEO batch estimate is still required because cost depends on the process graph and backend resource use.",
+        "cost_estimated_at": "2026-10-01T00:00:00.000Z",
+        "water_mask_source": "Pilot box clipped against Natural Earth 1:110m Admin 0 Countries v5.1.2 land geometry.",
+        "coverage_status": "disabled",
+        "created_at": "2026-10-01T00:00:00.000Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [73.0, 18.0],
+            [73.0, 18.44175806212711],
+            [72.820909, 19.208234],
+            [72.824475, 20.419503],
+            [72.70425927348677, 21.0],
+            [71.7649911445383, 21.0],
+            [71.175273, 20.757441],
+            [70.470459, 20.877331],
+            [70.33823916884866, 21.0],
+            [69.0, 21.0],
+            [69.0, 18.0],
+            [73.0, 18.0]
+          ]
+        ]
+      }
+    }
+  ]
+}
