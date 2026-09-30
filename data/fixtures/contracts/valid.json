@@ -16,6 +16,19 @@
       ]
     },
     "external_crs": "EPSG:4326",
+    "enabled": false,
+    "priority": "P1",
+    "valid_from": "2026-01-01T00:00:00.000Z",
+    "valid_to": null,
+    "policy_version": "1.0.0",
+    "dry_run_month": "2025-01",
+    "estimated_scene_count": 1,
+    "approximate_openeo_credits": null,
+    "cost_estimate_status": "pending_provider_run",
+    "cost_estimate_method": "Synthetic contract fixture; no provider job was run.",
+    "cost_estimated_at": "2026-01-01T00:00:00.000Z",
+    "water_mask_source": "Synthetic contract fixture.",
+    "coverage_status": "disabled",
     "created_at": "2026-01-01T00:00:00.000Z"
   },
   "Scene": {

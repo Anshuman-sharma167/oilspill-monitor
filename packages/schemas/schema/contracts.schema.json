@@ -30,6 +30,9 @@
     "NullableTimestamp": {
       "oneOf": [{ "$ref": "#/$defs/Timestamp" }, { "type": "null" }]
     },
+    "NullableNumber": {
+      "oneOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+    },
     "Position": {
       "type": "array",
       "prefixItems": [
@@ -106,6 +109,19 @@
         "name",
         "geometry",
         "external_crs",
+        "enabled",
+        "priority",
+        "valid_from",
+        "valid_to",
+        "policy_version",
+        "dry_run_month",
+        "estimated_scene_count",
+        "approximate_openeo_credits",
+        "cost_estimate_status",
+        "cost_estimate_method",
+        "cost_estimated_at",
+        "water_mask_source",
+        "coverage_status",
         "created_at"
       ],
       "properties": {
@@ -115,6 +131,36 @@
         "name": { "type": "string", "minLength": 1, "maxLength": 120 },
         "geometry": { "$ref": "#/$defs/GeoJSONGeometry" },
         "external_crs": { "const": "EPSG:4326" },
+        "enabled": { "type": "boolean" },
+        "priority": { "enum": ["P0", "P1", "P2"] },
+        "valid_from": { "$ref": "#/$defs/Timestamp" },
+        "valid_to": { "$ref": "#/$defs/NullableTimestamp" },
+        "policy_version": { "$ref": "#/$defs/Version" },
+        "dry_run_month": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "estimated_scene_count": { "type": "integer", "minimum": 0 },
+        "approximate_openeo_credits": {
+          "$ref": "#/$defs/NullableNumber"
+        },
+        "cost_estimate_status": {
+          "enum": ["estimated", "pending_provider_run"]
+        },
+        "cost_estimate_method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "cost_estimated_at": { "$ref": "#/$defs/Timestamp" },
+        "water_mask_source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "coverage_status": {
+          "enum": ["covered", "disabled", "deferred", "failed", "unobserved"]
+        },
         "created_at": { "$ref": "#/$defs/Timestamp" }
       }
     },

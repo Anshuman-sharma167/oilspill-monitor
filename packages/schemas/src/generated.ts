@@ -10,6 +10,8 @@ export type Timestamp = string;
 
 export type NullableTimestamp = Timestamp | null;
 
+export type NullableNumber = number | null;
+
 export type Position = [number, number];
 
 export type LinearRing = Array<Position>;
@@ -32,6 +34,19 @@ export interface AOI {
   "name": string;
   "geometry": GeoJSONGeometry;
   "external_crs": "EPSG:4326";
+  "enabled": boolean;
+  "priority": "P0" | "P1" | "P2";
+  "valid_from": Timestamp;
+  "valid_to": NullableTimestamp;
+  "policy_version": Version;
+  "dry_run_month": string;
+  "estimated_scene_count": number;
+  "approximate_openeo_credits": NullableNumber;
+  "cost_estimate_status": "estimated" | "pending_provider_run";
+  "cost_estimate_method": string;
+  "cost_estimated_at": Timestamp;
+  "water_mask_source": string;
+  "coverage_status": "covered" | "disabled" | "deferred" | "failed" | "unobserved";
   "created_at": Timestamp;
 }
 

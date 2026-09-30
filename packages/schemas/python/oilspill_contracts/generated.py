@@ -22,6 +22,8 @@ Timestamp: TypeAlias = str
 
 NullableTimestamp: TypeAlias = Timestamp | None
 
+NullableNumber: TypeAlias = float | None
+
 Position: TypeAlias = tuple[float, float]
 
 LinearRing: TypeAlias = list[Position]
@@ -51,6 +53,19 @@ class AOI(TypedDict):
     name: str
     geometry: GeoJSONGeometry
     external_crs: Literal["EPSG:4326"]
+    enabled: bool
+    priority: Literal["P0", "P1", "P2"]
+    valid_from: Timestamp
+    valid_to: NullableTimestamp
+    policy_version: Version
+    dry_run_month: str
+    estimated_scene_count: int
+    approximate_openeo_credits: NullableNumber
+    cost_estimate_status: Literal["estimated", "pending_provider_run"]
+    cost_estimate_method: str
+    cost_estimated_at: Timestamp
+    water_mask_source: str
+    coverage_status: Literal["covered", "disabled", "deferred", "failed", "unobserved"]
     created_at: Timestamp
 
 
