@@ -7,13 +7,16 @@ const python =
     ? join(".venv", "Scripts", "python.exe")
     : join(".venv", "bin", "python");
 
-const gitFiles = (extension) => {
+const workspaceFiles = (extension) => {
   const result = spawnSync(
     "git",
     [
       "-c",
       `safe.directory=${process.cwd().replaceAll("\\", "/")}`,
       "ls-files",
+      "--cached",
+      "--others",
+      "--exclude-standard",
       "-z",
       "--",
       `*.${extension}`,
@@ -30,7 +33,7 @@ const pathsIndex = process.argv.indexOf("--paths");
 const extension = mode === "sql-format" ? "sql" : "py";
 const files =
   pathsIndex === -1
-    ? gitFiles(extension)
+    ? workspaceFiles(extension)
     : process.argv
         .slice(pathsIndex + 1)
         .filter((path) => path.endsWith(`.${extension}`));

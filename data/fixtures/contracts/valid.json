@@ -1,0 +1,126 @@
+{
+  "AOI": {
+    "kind": "AOI",
+    "schema_version": "1.0.0",
+    "aoi_id": "aoi:synthetic-test",
+    "name": "Synthetic test area",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 0]
+        ]
+      ]
+    },
+    "external_crs": "EPSG:4326",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  "Scene": {
+    "kind": "Scene",
+    "schema_version": "1.0.0",
+    "scene_id": "scene:synthetic-test",
+    "provider": "synthetic-provider",
+    "provider_scene_id": "synthetic-scene-001",
+    "acquired_at": "2026-01-01T00:00:00.000Z",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 0]
+        ]
+      ]
+    },
+    "external_crs": "EPSG:4326",
+    "first_discovered_at": "2026-01-01T00:01:00.000Z",
+    "last_discovered_at": "2026-01-01T00:01:00.000Z"
+  },
+  "ProcessingJob": {
+    "kind": "ProcessingJob",
+    "schema_version": "1.0.0",
+    "job_id": "job:synthetic-test",
+    "scene_id": "scene:synthetic-test",
+    "aoi_id": "aoi:synthetic-test",
+    "preprocessing_version": "1.0.0",
+    "model_version": "1.0.0",
+    "state": "ready_for_review",
+    "discovered_at": "2026-01-01T00:01:00.000Z",
+    "queued_at": "2026-01-01T00:02:00.000Z",
+    "preprocessing_at": "2026-01-01T00:03:00.000Z",
+    "inferencing_at": "2026-01-01T00:04:00.000Z",
+    "ready_for_review_at": "2026-01-01T00:05:00.000Z",
+    "failed_at": null,
+    "deferred_quota_at": null,
+    "failure": null
+  },
+  "ModelVersion": {
+    "kind": "ModelVersion",
+    "schema_version": "1.0.0",
+    "model_version": "1.0.0",
+    "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "input_contract_version": "1.0.0",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  "Candidate": {
+    "kind": "Candidate",
+    "schema_version": "1.0.0",
+    "candidate_id": "candidate:synthetic-test",
+    "job_id": "job:synthetic-test",
+    "detection_key": "detection:synthetic-shape",
+    "display_rank": 1,
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 0]
+        ]
+      ]
+    },
+    "external_crs": "EPSG:4326",
+    "assessment": "uncertain",
+    "review_status": "pending_manual_review",
+    "created_at": "2026-01-01T00:05:00.000Z"
+  },
+  "CandidateAsset": {
+    "kind": "CandidateAsset",
+    "schema_version": "1.0.0",
+    "asset_id": "asset:synthetic-context",
+    "candidate_id": "candidate:synthetic-test",
+    "asset_type": "context_webp",
+    "layout_version": "1.0.0",
+    "media_type": "image/webp",
+    "uri": "https://example.invalid/synthetic/context.webp",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-01-01T00:05:00.000Z"
+  },
+  "Review": {
+    "kind": "Review",
+    "schema_version": "1.0.0",
+    "review_id": "review:synthetic-test",
+    "candidate_id": "candidate:synthetic-test",
+    "reviewer_id": "reviewer:synthetic-test",
+    "revision": 1,
+    "decision": "approved",
+    "reviewed_at": "2026-01-01T00:06:00.000Z"
+  },
+  "AlertDelivery": {
+    "kind": "AlertDelivery",
+    "schema_version": "1.0.0",
+    "delivery_id": "delivery:synthetic-test",
+    "candidate_id": "candidate:synthetic-test",
+    "review_id": "review:synthetic-test",
+    "channel": "telegram",
+    "state": "approved",
+    "attempt_count": 0,
+    "approved_at": "2026-01-01T00:06:00.000Z",
+    "delivered_at": null
+  }
+}

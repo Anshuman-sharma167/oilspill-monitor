@@ -21,6 +21,11 @@ const requirements = [
     "exact runtime base",
   ],
   [dockerfile, /^USER node$/mu, "non-root runtime user"],
+  [
+    dockerfile,
+    /^COPY --chown=node:node packages\/schemas\/schema\/contracts\.schema\.json \.\/dist\/packages\/schemas\/schema\/contracts\.schema\.json$/mu,
+    "canonical contract schema in runtime image",
+  ],
   [dockerfile, /^HEALTHCHECK NONE$/mu, "explicit one-shot healthcheck policy"],
   [compose, /network_mode:\s*none/u, "disabled integration network"],
   [compose, /read_only:\s*true/u, "read-only integration filesystem"],

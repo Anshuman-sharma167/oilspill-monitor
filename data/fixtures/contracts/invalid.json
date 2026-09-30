@@ -1,0 +1,112 @@
+[
+  {
+    "name": "external CRS is not EPSG:4326",
+    "model": "AOI",
+    "payload": {
+      "kind": "AOI",
+      "schema_version": "1.0.0",
+      "aoi_id": "aoi:bad-crs",
+      "name": "Synthetic invalid area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 0]
+          ]
+        ]
+      },
+      "external_crs": "EPSG:3857",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "name": "GeoJSON ring is not closed",
+    "model": "Candidate",
+    "payload": {
+      "kind": "Candidate",
+      "schema_version": "1.0.0",
+      "candidate_id": "candidate:bad-ring",
+      "job_id": "job:synthetic-test",
+      "detection_key": "detection:bad-ring",
+      "display_rank": 1,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1]
+          ]
+        ]
+      },
+      "external_crs": "EPSG:4326",
+      "assessment": "uncertain",
+      "review_status": "pending_manual_review",
+      "created_at": "2026-01-01T00:05:00.000Z"
+    }
+  },
+  {
+    "name": "job state is outside the exact state machine",
+    "model": "ProcessingJob",
+    "payload": {
+      "kind": "ProcessingJob",
+      "schema_version": "1.0.0",
+      "job_id": "job:invalid-state",
+      "scene_id": "scene:synthetic-test",
+      "aoi_id": "aoi:synthetic-test",
+      "preprocessing_version": "1.0.0",
+      "model_version": "1.0.0",
+      "state": "complete",
+      "discovered_at": "2026-01-01T00:01:00.000Z",
+      "queued_at": null,
+      "preprocessing_at": null,
+      "inferencing_at": null,
+      "ready_for_review_at": null,
+      "failed_at": null,
+      "deferred_quota_at": null,
+      "failure": null
+    }
+  },
+  {
+    "name": "asset media type does not match layout",
+    "model": "CandidateAsset",
+    "payload": {
+      "kind": "CandidateAsset",
+      "schema_version": "1.0.0",
+      "asset_id": "asset:bad-media",
+      "candidate_id": "candidate:synthetic-test",
+      "asset_type": "mask_cog",
+      "layout_version": "1.0.0",
+      "media_type": "image/webp",
+      "uri": "https://example.invalid/synthetic/mask.tif",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "created_at": "2026-01-01T00:05:00.000Z"
+    }
+  },
+  {
+    "name": "failed job lacks a structured failure",
+    "model": "ProcessingJob",
+    "payload": {
+      "kind": "ProcessingJob",
+      "schema_version": "1.0.0",
+      "job_id": "job:missing-failure",
+      "scene_id": "scene:synthetic-test",
+      "aoi_id": "aoi:synthetic-test",
+      "preprocessing_version": "1.0.0",
+      "model_version": "1.0.0",
+      "state": "failed",
+      "discovered_at": "2026-01-01T00:01:00.000Z",
+      "queued_at": "2026-01-01T00:02:00.000Z",
+      "preprocessing_at": null,
+      "inferencing_at": null,
+      "ready_for_review_at": null,
+      "failed_at": "2026-01-01T00:03:00.000Z",
+      "deferred_quota_at": null,
+      "failure": null
+    }
+  }
+]

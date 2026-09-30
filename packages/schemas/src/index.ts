@@ -5,6 +5,10 @@ export const candidateAssessments = [
   "uncertain",
 ] as const;
 
+export * from "./generated.js";
+export * from "./identity.js";
+export * from "./validation.js";
+
 export const reviewPriorities = ["low", "normal", "high"] as const;
 
 export type CandidateAssessment = (typeof candidateAssessments)[number];

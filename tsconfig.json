@@ -7,7 +7,7 @@
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "types": ["node"]
+    "types": ["node", "emscripten"]
   },
   "include": [
     "apps/**/*.ts",
