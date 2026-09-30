@@ -123,5 +123,6 @@ outputs/
 
 # Data is private by default. Only deliberate synthetic fixtures are allowed.
 data/**
+!data/aois.geojson
 !data/fixtures/
 !data/fixtures/**

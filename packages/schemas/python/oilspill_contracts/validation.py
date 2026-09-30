@@ -145,20 +145,87 @@ def _validate_node(rule: JsonObject, value: JsonValue, path: str) -> None:
                 )
 
 
-def _rings(geometry: JsonObject) -> list[list[JsonValue]]:
+Position = tuple[float, float]
+Ring = list[Position]
+
+
+def _polygons(geometry: JsonObject) -> list[list[Ring]]:
     coordinates = geometry.get("coordinates")
     if not isinstance(coordinates, list):
         return []
     if geometry.get("type") == "Polygon":
-        return cast(list[list[JsonValue]], coordinates)
-    polygons = cast(list[list[list[JsonValue]]], coordinates)
-    return [ring for polygon in polygons for ring in polygon]
+        return [cast(list[Ring], coordinates)]
+    return cast(list[list[Ring]], coordinates)
+
+
+def _signed_area(ring: Ring) -> float:
+    return (
+        sum(
+            point[0] * ring[index + 1][1] - ring[index + 1][0] * point[1]
+            for index, point in enumerate(ring[:-1])
+        )
+        / 2
+    )
+
+
+def _orientation(a: Position, b: Position, c: Position) -> int:
+    value = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+    return (value > 0) - (value < 0)
+
+
+def _segments_intersect(a: Position, b: Position, c: Position, d: Position) -> bool:
+    return _orientation(a, b, c) != _orientation(a, b, d) and _orientation(
+        c, d, a
+    ) != _orientation(c, d, b)
+
+
+def _self_intersects(ring: Ring) -> bool:
+    segment_count = len(ring) - 1
+    for first in range(segment_count):
+        for second in range(first + 1, segment_count):
+            if second == first + 1 or (first == 0 and second == segment_count - 1):
+                continue
+            if _segments_intersect(
+                ring[first],
+                ring[first + 1],
+                ring[second],
+                ring[second + 1],
+            ):
+                return True
+    return False
 
 
 def _validate_geometry(geometry: JsonObject) -> None:
-    for ring in _rings(geometry):
-        if ring[0] != ring[-1]:
-            _fail("$.geometry", "GeoJSON linear rings must be closed")
+    for polygon in _polygons(geometry):
+        for ring_index, ring in enumerate(polygon):
+            if ring[0] != ring[-1]:
+                _fail("$.geometry", "GeoJSON linear rings must be closed")
+            area = _signed_area(ring)
+            if area == 0:
+                _fail("$.geometry", "GeoJSON rings must not be empty")
+            if (ring_index == 0 and area < 0) or (ring_index > 0 and area > 0):
+                _fail("$.geometry", "GeoJSON rings must use right-hand-rule winding")
+            if _self_intersects(ring):
+                _fail("$.geometry", "GeoJSON rings must not self-intersect")
+
+
+def _validate_aoi(value: JsonObject) -> None:
+    valid_from = datetime.fromisoformat(
+        str(value.get("valid_from")).replace("Z", "+00:00")
+    )
+    valid_to = value.get("valid_to")
+    if (
+        isinstance(valid_to, str)
+        and datetime.fromisoformat(valid_to.replace("Z", "+00:00")) <= valid_from
+    ):
+        _fail("$.valid_to", "must be later than valid_from")
+    if value.get("enabled") is True and (
+        value.get("cost_estimate_status") != "estimated"
+        or value.get("approximate_openeo_credits") is None
+    ):
+        _fail(
+            "$.enabled", "requires a recorded provider cost estimate before activation"
+        )
 
 
 def _validate_job(value: JsonObject) -> None:
@@ -223,6 +290,7 @@ def validate_contract(model_name: str, value: JsonValue) -> None:
     record = _object(value, "$")
     if model_name == "AOI":
         _validate_geometry(_object(record.get("geometry"), "$.geometry"))
+        _validate_aoi(record)
     elif model_name == "Scene":
         _validate_geometry(_object(record.get("footprint"), "$.footprint"))
     elif model_name == "Candidate":
