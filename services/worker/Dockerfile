@@ -21,6 +21,7 @@ FROM node:24.15.0-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=builder --chown=node:node /app/dist ./dist
+COPY --chown=node:node packages/schemas/schema/contracts.schema.json ./dist/packages/schemas/schema/contracts.schema.json
 USER node
 HEALTHCHECK NONE
 CMD ["node", "dist/scripts/sample.js"]

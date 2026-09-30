@@ -30,7 +30,7 @@ production service.
 
 ## Command surface
 
-| Purpose                | Command                  | Part 4 behavior                                                                      |
+| Purpose                | Command                  | Current behavior                                                                     |
 | ---------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
 | Setup                  | `npm run setup`          | Installs locked Node and Python development dependencies                             |
 | Full check             | `npm run check`          | Runs local quality, mock integration, configuration, container, and repository scans |
@@ -39,11 +39,11 @@ production service.
 | Database reset         | `npm run db:reset`       | Returns exit 2 with a later-part prerequisite message                                |
 | Migration              | `npm run db:migrate`     | Returns exit 2 with a later-part prerequisite message                                |
 | Documentation build    | `npm run docs:build`     | Builds a deterministic Markdown hash manifest under ignored `build/`                 |
-| Schema type generation | `npm run types:generate` | Returns exit 2 until database or API schemas exist in a later part                   |
+| Schema type generation | `npm run types:generate` | Generates Python and TypeScript models from the canonical Part 5 JSON Schema         |
 
-The deferred commands are intentional guards. They do not invent a dashboard,
-database, migration, or Part 5 schema. Windows needs no separate wrapper because
-all commands are cross-platform Node scripts invoked through npm.
+The dashboard and database execution commands remain intentional guards. Windows
+needs no separate wrapper because all commands are cross-platform Node scripts
+invoked through npm.
 
 ## Local integration and container
 
@@ -68,8 +68,9 @@ sample processing do not require Docker.
 
 ## Generated types
 
-`npm run types:generate` is present so a later database or API schema can become
-the single source of generated TypeScript types. No applicable schema exists in
-Part 4, so the command returns an intentional prerequisite result and writes
-nothing. The existing Part 3 candidate interfaces are preserved rather than
-replaced with invented Part 5 contracts.
+`npm run types:generate` deterministically writes the Python and TypeScript
+models from `packages/schemas/schema/contracts.schema.json`.
+`npm run types:check` compares both checked-in outputs with a fresh generation
+and fails without modifying files when either output is stale. The existing Part
+3 candidate normalizer remains available for the synthetic sample while new code
+can consume the versioned Part 5 models.

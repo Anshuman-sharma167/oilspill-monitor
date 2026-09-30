@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oilspill-monitor.invalid/schemas/contracts/1.0.0",
+  "title": "Oilspill Monitor shared contracts",
+  "description": "Canonical Part 5 contracts. External geometries use RFC 7946 GeoJSON coordinates in EPSG:4326.",
+  "schema_version": "1.0.0",
+  "oneOf": [
+    { "$ref": "#/$defs/AOI" },
+    { "$ref": "#/$defs/Scene" },
+    { "$ref": "#/$defs/ProcessingJob" },
+    { "$ref": "#/$defs/ModelVersion" },
+    { "$ref": "#/$defs/Candidate" },
+    { "$ref": "#/$defs/CandidateAsset" },
+    { "$ref": "#/$defs/Review" },
+    { "$ref": "#/$defs/AlertDelivery" }
+  ],
+  "$defs": {
+    "Identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{2,127}$"
+    },
+    "Version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "NullableTimestamp": {
+      "oneOf": [{ "$ref": "#/$defs/Timestamp" }, { "type": "null" }]
+    },
+    "Position": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": -180, "maximum": 180 },
+        { "type": "number", "minimum": -90, "maximum": 90 }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "LinearRing": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Position" },
+      "minItems": 4
+    },
+    "PolygonCoordinates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/LinearRing" },
+      "minItems": 1
+    },
+    "GeoJSONGeometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "const": "Polygon" },
+            "coordinates": { "$ref": "#/$defs/PolygonCoordinates" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "const": "MultiPolygon" },
+            "coordinates": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/PolygonCoordinates" },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "Failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "stage", "retryable", "detail"],
+      "properties": {
+        "code": {
+          "enum": [
+            "OPENEO_TIMEOUT",
+            "WORKER_INTERRUPTED",
+            "CORRUPTED_OUTPUT",
+            "CONTRACT_VALIDATION_FAILED",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "stage": {
+          "enum": ["discovery", "preprocessing", "inferencing", "storage"]
+        },
+        "retryable": { "type": "boolean" },
+        "detail": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "AOI": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "aoi_id",
+        "name",
+        "geometry",
+        "external_crs",
+        "created_at"
+      ],
+      "properties": {
+        "kind": { "const": "AOI" },
+        "schema_version": { "const": "1.0.0" },
+        "aoi_id": { "$ref": "#/$defs/Identifier" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "geometry": { "$ref": "#/$defs/GeoJSONGeometry" },
+        "external_crs": { "const": "EPSG:4326" },
+        "created_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "Scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "scene_id",
+        "provider",
+        "provider_scene_id",
+        "acquired_at",
+        "footprint",
+        "external_crs",
+        "first_discovered_at",
+        "last_discovered_at"
+      ],
+      "properties": {
+        "kind": { "const": "Scene" },
+        "schema_version": { "const": "1.0.0" },
+        "scene_id": { "$ref": "#/$defs/Identifier" },
+        "provider": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "provider_scene_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "acquired_at": { "$ref": "#/$defs/Timestamp" },
+        "footprint": { "$ref": "#/$defs/GeoJSONGeometry" },
+        "external_crs": { "const": "EPSG:4326" },
+        "first_discovered_at": { "$ref": "#/$defs/Timestamp" },
+        "last_discovered_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "ProcessingJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "job_id",
+        "scene_id",
+        "aoi_id",
+        "preprocessing_version",
+        "model_version",
+        "state",
+        "discovered_at",
+        "queued_at",
+        "preprocessing_at",
+        "inferencing_at",
+        "ready_for_review_at",
+        "failed_at",
+        "deferred_quota_at",
+        "failure"
+      ],
+      "properties": {
+        "kind": { "const": "ProcessingJob" },
+        "schema_version": { "const": "1.0.0" },
+        "job_id": { "$ref": "#/$defs/Identifier" },
+        "scene_id": { "$ref": "#/$defs/Identifier" },
+        "aoi_id": { "$ref": "#/$defs/Identifier" },
+        "preprocessing_version": { "$ref": "#/$defs/Version" },
+        "model_version": { "$ref": "#/$defs/Version" },
+        "state": {
+          "enum": [
+            "discovered",
+            "queued",
+            "preprocessing",
+            "inferencing",
+            "ready_for_review",
+            "failed",
+            "deferred_quota"
+          ]
+        },
+        "discovered_at": { "$ref": "#/$defs/Timestamp" },
+        "queued_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "preprocessing_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "inferencing_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "ready_for_review_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "failed_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "deferred_quota_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "failure": {
+          "oneOf": [{ "$ref": "#/$defs/Failure" }, { "type": "null" }]
+        }
+      }
+    },
+    "ModelVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "model_version",
+        "artifact_sha256",
+        "input_contract_version",
+        "created_at"
+      ],
+      "properties": {
+        "kind": { "const": "ModelVersion" },
+        "schema_version": { "const": "1.0.0" },
+        "model_version": { "$ref": "#/$defs/Version" },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "input_contract_version": { "$ref": "#/$defs/Version" },
+        "created_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "Candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "candidate_id",
+        "job_id",
+        "detection_key",
+        "display_rank",
+        "geometry",
+        "external_crs",
+        "assessment",
+        "review_status",
+        "created_at"
+      ],
+      "properties": {
+        "kind": { "const": "Candidate" },
+        "schema_version": { "const": "1.0.0" },
+        "candidate_id": { "$ref": "#/$defs/Identifier" },
+        "job_id": { "$ref": "#/$defs/Identifier" },
+        "detection_key": { "$ref": "#/$defs/Identifier" },
+        "display_rank": { "type": "integer", "minimum": 1 },
+        "geometry": { "$ref": "#/$defs/GeoJSONGeometry" },
+        "external_crs": { "const": "EPSG:4326" },
+        "assessment": {
+          "enum": [
+            "oil-like slick candidate",
+            "likely slick",
+            "look-alike",
+            "uncertain"
+          ]
+        },
+        "review_status": {
+          "enum": ["pending_manual_review", "approved", "rejected"]
+        },
+        "created_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "CandidateAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "asset_id",
+        "candidate_id",
+        "asset_type",
+        "layout_version",
+        "media_type",
+        "uri",
+        "sha256",
+        "created_at"
+      ],
+      "properties": {
+        "kind": { "const": "CandidateAsset" },
+        "schema_version": { "const": "1.0.0" },
+        "asset_id": { "$ref": "#/$defs/Identifier" },
+        "candidate_id": { "$ref": "#/$defs/Identifier" },
+        "asset_type": {
+          "enum": [
+            "context_webp",
+            "detail_webp",
+            "probability_cog",
+            "mask_cog",
+            "report_json"
+          ]
+        },
+        "layout_version": { "const": "1.0.0" },
+        "media_type": {
+          "enum": [
+            "image/webp",
+            "image/tiff; application=geotiff",
+            "application/json"
+          ]
+        },
+        "uri": { "type": "string", "format": "uri" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "created_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "review_id",
+        "candidate_id",
+        "reviewer_id",
+        "revision",
+        "decision",
+        "reviewed_at"
+      ],
+      "properties": {
+        "kind": { "const": "Review" },
+        "schema_version": { "const": "1.0.0" },
+        "review_id": { "$ref": "#/$defs/Identifier" },
+        "candidate_id": { "$ref": "#/$defs/Identifier" },
+        "reviewer_id": { "$ref": "#/$defs/Identifier" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "decision": {
+          "enum": ["approved", "rejected", "needs_more_information"]
+        },
+        "reviewed_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "AlertDelivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "delivery_id",
+        "candidate_id",
+        "review_id",
+        "channel",
+        "state",
+        "attempt_count",
+        "approved_at",
+        "delivered_at"
+      ],
+      "properties": {
+        "kind": { "const": "AlertDelivery" },
+        "schema_version": { "const": "1.0.0" },
+        "delivery_id": { "$ref": "#/$defs/Identifier" },
+        "candidate_id": { "$ref": "#/$defs/Identifier" },
+        "review_id": { "$ref": "#/$defs/Identifier" },
+        "channel": { "const": "telegram" },
+        "state": {
+          "enum": ["approved", "sending", "delivered", "retryable_failure"]
+        },
+        "attempt_count": { "type": "integer", "minimum": 0 },
+        "approved_at": { "$ref": "#/$defs/Timestamp" },
+        "delivered_at": { "$ref": "#/$defs/NullableTimestamp" }
+      }
+    }
+  }
+}

@@ -6,3 +6,6 @@ package-lock.json
 uv.lock
 .venv/
 build/
+packages/schemas/src/generated.ts
+.pytest_cache/
+**/__pycache__/

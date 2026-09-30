@@ -41,6 +41,10 @@ jobs:
         run: npm run versions:check
       - name: Install locked Python development dependencies
         run: npm run setup:python
+      - name: Verify generated shared-schema consumers
+        run: npm run types:check
+      - name: Contract-test TypeScript and Python consumers
+        run: npm run test:contracts
       - name: Run local quality command
         run: npm run check:quality
       - name: Audit dependencies

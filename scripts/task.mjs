@@ -115,6 +115,8 @@ if (command === "versions") {
     "--progress-spinner",
     "off",
   ]);
+} else if (command === "test-python-contracts") {
+  run(venvPython(), ["-m", "pytest", "-q", "tests/test_contracts.py"]);
 } else if (command === "deferred") {
   const prerequisite = process.argv[3] ?? "unknown";
   console.error(
@@ -123,7 +125,7 @@ if (command === "versions") {
   process.exitCode = 2;
 } else {
   console.error(
-    "Usage: node scripts/task.mjs <versions|setup|setup-python|precommit|audit-python|deferred>",
+    "Usage: node scripts/task.mjs <versions|setup|setup-python|precommit|audit-python|test-python-contracts|deferred>",
   );
   process.exitCode = 2;
 }
