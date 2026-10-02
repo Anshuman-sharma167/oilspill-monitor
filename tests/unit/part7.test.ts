@@ -508,9 +508,14 @@ test("database reservation is atomic, deferral persists, and retry does not dupl
     sceneId: sceneId(
       "cdse-stac",
       (fixture.features as Array<{ id: string }>)[0]!.id,
+      "sentinel-1-grd",
     ),
     localJobId: processingJobId(
-      sceneId("cdse-stac", (fixture.features as Array<{ id: string }>)[0]!.id),
+      sceneId(
+        "cdse-stac",
+        (fixture.features as Array<{ id: string }>)[0]!.id,
+        "sentinel-1-grd",
+      ),
       job.aoiId,
       "1.0.0",
       "1.0.0",

@@ -55,12 +55,23 @@ export interface Scene {
   "schema_version": "1.0.0";
   "scene_id": Identifier;
   "provider": string;
+  "collection": string;
   "provider_scene_id": string;
   "acquired_at": Timestamp;
+  "acquisition_end": Timestamp;
+  "platform": "sentinel-1a" | "sentinel-1b" | "sentinel-1c";
+  "orbit_direction": "ascending" | "descending";
+  "relative_orbit": number;
+  "product_type": "IW_GRDH_1S";
+  "polarizations": Array<"HH" | "HV" | "VH" | "VV">;
   "footprint": GeoJSONGeometry;
   "external_crs": "EPSG:4326";
+  "published_at": NullableTimestamp;
   "first_discovered_at": Timestamp;
   "last_discovered_at": Timestamp;
+  "asset_references": Array<{ "key": string; "href": string; "type"?: string; "roles"?: Array<string>; }>;
+  "raw_metadata_checksum": string;
+  "polarization_disposition": "dual_band" | "missing_vh" | "invalid_polarization";
 }
 
 export interface ProcessingJob {

@@ -177,28 +177,79 @@
         "schema_version",
         "scene_id",
         "provider",
+        "collection",
         "provider_scene_id",
         "acquired_at",
+        "acquisition_end",
+        "platform",
+        "orbit_direction",
+        "relative_orbit",
+        "product_type",
+        "polarizations",
         "footprint",
         "external_crs",
+        "published_at",
         "first_discovered_at",
-        "last_discovered_at"
+        "last_discovered_at",
+        "asset_references",
+        "raw_metadata_checksum",
+        "polarization_disposition"
       ],
       "properties": {
         "kind": { "const": "Scene" },
         "schema_version": { "const": "1.0.0" },
         "scene_id": { "$ref": "#/$defs/Identifier" },
         "provider": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "collection": { "type": "string", "minLength": 1, "maxLength": 120 },
         "provider_scene_id": {
           "type": "string",
           "minLength": 1,
           "maxLength": 200
         },
         "acquired_at": { "$ref": "#/$defs/Timestamp" },
+        "acquisition_end": { "$ref": "#/$defs/Timestamp" },
+        "platform": {
+          "enum": ["sentinel-1a", "sentinel-1b", "sentinel-1c"]
+        },
+        "orbit_direction": { "enum": ["ascending", "descending"] },
+        "relative_orbit": { "type": "integer", "minimum": 1 },
+        "product_type": { "const": "IW_GRDH_1S" },
+        "polarizations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "enum": ["HH", "HV", "VH", "VV"] }
+        },
         "footprint": { "$ref": "#/$defs/GeoJSONGeometry" },
         "external_crs": { "const": "EPSG:4326" },
+        "published_at": { "$ref": "#/$defs/NullableTimestamp" },
         "first_discovered_at": { "$ref": "#/$defs/Timestamp" },
-        "last_discovered_at": { "$ref": "#/$defs/Timestamp" }
+        "last_discovered_at": { "$ref": "#/$defs/Timestamp" },
+        "asset_references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "href"],
+            "properties": {
+              "key": { "type": "string", "minLength": 1, "maxLength": 100 },
+              "href": { "type": "string", "format": "uri", "maxLength": 2000 },
+              "type": { "type": "string", "minLength": 1, "maxLength": 200 },
+              "roles": {
+                "type": "array",
+                "maxItems": 10,
+                "items": { "type": "string", "minLength": 1, "maxLength": 50 }
+              }
+            }
+          }
+        },
+        "raw_metadata_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "polarization_disposition": {
+          "enum": ["dual_band", "missing_vh", "invalid_polarization"]
+        }
       }
     },
     "ProcessingJob": {

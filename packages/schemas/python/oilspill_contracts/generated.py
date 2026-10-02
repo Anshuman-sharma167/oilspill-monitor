@@ -79,12 +79,23 @@ class Scene(TypedDict):
     schema_version: Literal["1.0.0"]
     scene_id: Identifier
     provider: str
+    collection: str
     provider_scene_id: str
     acquired_at: Timestamp
+    acquisition_end: Timestamp
+    platform: Literal["sentinel-1a", "sentinel-1b", "sentinel-1c"]
+    orbit_direction: Literal["ascending", "descending"]
+    relative_orbit: int
+    product_type: Literal["IW_GRDH_1S"]
+    polarizations: list[Literal["HH", "HV", "VH", "VV"]]
     footprint: GeoJSONGeometry
     external_crs: Literal["EPSG:4326"]
+    published_at: NullableTimestamp
     first_discovered_at: Timestamp
     last_discovered_at: Timestamp
+    asset_references: list[dict[str, object]]
+    raw_metadata_checksum: str
+    polarization_disposition: Literal["dual_band", "missing_vh", "invalid_polarization"]
 
 
 class ProcessingJob(TypedDict):

@@ -9,3 +9,7 @@ The migration enforces repeated-discovery, immutable-job, stable-candidate, and
 repeated-alert-approval keys. Application callers must use upsert/conflict
 handling as documented in `docs/architecture/idempotency.md`; a uniqueness error
 is not a substitute for returning the existing record.
+
+Part 8 also includes the protected `part8-discovery` Edge Function. Its Cron
+target reads `project_url`, `publishable_key`, and `part8_cron_secret` from
+Vault; see `docs/operations/part8-discovery.md` before deployment.

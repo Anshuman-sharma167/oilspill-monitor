@@ -15,7 +15,7 @@ import { processingJobId, sceneId } from "../packages/schemas/src/identity.js";
 const evidencePath = resolve("evidence/part7-live-pilot.json");
 const publicSceneId =
   "S1A_IW_GRDH_1SDV_20250131T010348_20250131T010403_057681_071BF1_F170_COG";
-const sourceSceneId = sceneId("cdse-stac", publicSceneId);
+const sourceSceneId = sceneId("cdse-stac", publicSceneId, "sentinel-1-grd");
 const pilot: PilotJob = {
   localJobId: processingJobId(
     sourceSceneId,
@@ -115,7 +115,7 @@ async function main(): Promise<void> {
   if (
     !stac.features.some(
       (item) =>
-        sceneId("cdse-stac", item.id) === pilot.sceneId &&
+        sceneId("cdse-stac", item.id, item.collection) === pilot.sceneId &&
         item.polarizations.includes("VV") &&
         item.polarizations.includes("VH"),
     )

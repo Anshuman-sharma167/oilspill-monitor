@@ -5,6 +5,7 @@ const dashboardRoot = join("apps", "dashboard");
 const prohibitedNames = [
   "CDSE_CLIENT_ID",
   "CDSE_CLIENT_SECRET",
+  "PART8_CRON_SECRET",
   "SUPABASE_SERVICE_ROLE_KEY",
   "R2_ENDPOINT",
   "R2_ACCESS_KEY_ID",
