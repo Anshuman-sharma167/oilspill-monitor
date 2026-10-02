@@ -17,7 +17,53 @@
   `npm run check` PASS (54 TypeScript tests and 2 Python tests, plus formatting,
   lint, typing, sample, mock integration, configuration, container, and
   repository-scan gates).
+- Delivery: committed as `bb9f210` on `part-6-aoi-quota` and opened as GitHub
+  pull request #4. All GitHub checks passed and the pull request reports a
+  clean, mergeable state.
 - Remaining limitations: the pilot stays disabled until an authenticated openEO
   provider estimate supplies an approximate credit cost. PostGIS checks are
   present in the migration but were not runtime-tested because no local PostGIS
   service was available.
+
+## 2026-10-01 — Part 7: CDSE access and credit accounting
+
+- Added server-only CDSE client configuration, typed authentication and provider
+  errors, expiring token cache, bounded STAC and openEO requests, a sanitized
+  Sentinel-1 GRD fixture, VV/VH validation, and a tiny versioned job graph.
+  Added usage caching, fail-closed quota decisions, durable reservation and
+  provider-job state, credit ledger, coverage-gap handling, and operations and
+  provider-source notes. Part 8 was not changed.
+- Changed `.env.example`, `packages/config`, the shared schema and generated
+  TypeScript/Python models and validators, `services/worker/src/part7*.ts`,
+  `supabase/migrations/20261001100000_part7_cdse_accounting.sql`, Part 7
+  fixtures and tests, `package.json`, and Part 7 operations documentation. The
+  migration adds private usage snapshots, reviewer releases, provider runs,
+  dispatch decisions, and an append-only credit ledger. It extends the Part 5
+  failure codes and links Part 7 work to coverage gaps.
+- Verification: focused Part 7 tests PASS (10/10), including persistent P2
+  deferral at the 80% threshold, replay-safe submission and ledger entries,
+  rejection of worker-written reviewer releases, and reopening a failed-job gap.
+  Part 5/6 and contract checks PASS; full `npm run check` PASS (64 TypeScript
+  and 2 Python tests, formatting, lint, typing, sample, mock integration,
+  configuration, container, and repository scan). Full PostGIS runtime migration
+  check SKIPPED because the Docker daemon is unavailable.
+- Live evidence: authenticated token and account access PASS; CDSE STAC search
+  PASS for one Sentinel-1 GRD scene with VV/VH; openEO collection metadata PASS
+  for VV/VH. The versioned tiny openEO job finished on 2 October 2026. CDSE
+  reported 4 billed credits and the result asset reported 31,755 bytes. The
+  sanitized evidence contains timestamps and IDs but no token, secret, account
+  identity, signed URL, or raster. `GET /me` did not expose monthly allowance or
+  usage, so P2 continues to fail closed.
+- Security: initial Codex Security working-tree diff scan reviewed 11 changed
+  source files and found one medium reviewer-release authorization issue and one
+  low coverage-gap audit issue. Both were fixed; the STAC sanitizer was
+  tightened. The completed rescan reviewed the same 11 changed source files with
+  complete source coverage and zero findings. No secrets were found by the
+  repository scan. Production reviewer-role grants remain unverified.
+- Exit gate: **PASSED**. One versioned openEO job ran end to end with recorded
+  timestamps, 4 provider-reported credits, and a 31,755-byte output. Focused
+  tests persist `deferred_quota` under forced quota exhaustion, and the full
+  repository scan found no secret. No paid resources were activated. The Part 6
+  recurring pilot remains disabled, and deploying the migration to a Supabase
+  project remains an environment step because this checkout has no linked
+  project or database credentials.

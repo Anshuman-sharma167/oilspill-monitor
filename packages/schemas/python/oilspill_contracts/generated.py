@@ -12,6 +12,9 @@ CONTRACT_MODEL_NAMES = [
     "CandidateAsset",
     "Review",
     "AlertDelivery",
+    "ProviderUsageSnapshot",
+    "ProviderJobRun",
+    "CreditLedgerEntry",
 ]
 
 Identifier: TypeAlias = str
@@ -40,6 +43,8 @@ class Failure(TypedDict):
         "CORRUPTED_OUTPUT",
         "CONTRACT_VALIDATION_FAILED",
         "INTERNAL_ERROR",
+        "PROVIDER_JOB_FAILED",
+        "PROVIDER_JOB_CANCELLED",
     ]
     stage: Literal["discovery", "preprocessing", "inferencing", "storage"]
     retryable: bool
@@ -162,6 +167,65 @@ class Review(TypedDict):
     reviewed_at: Timestamp
 
 
+class ProviderUsageSnapshot(TypedDict):
+    kind: Literal["ProviderUsageSnapshot"]
+    schema_version: Literal["1.0.0"]
+    allowance: float
+    used: float
+    fetched_at: Timestamp
+    accounting_month: str
+    scope: Literal["cdse-openeo-service-account"]
+    provenance: Literal["provider-reported"]
+
+
+class ProviderJobRun(TypedDict):
+    kind: Literal["ProviderJobRun"]
+    schema_version: Literal["1.0.0"]
+    job_id: Identifier
+    provider_job_id: Identifier | None
+    aoi_id: Identifier
+    policy_version: Version
+    graph_version: Version
+    priority: Literal["P0", "P1", "P2"]
+    state: Literal[
+        "reserved",
+        "submitting",
+        "submitted",
+        "queued",
+        "running",
+        "finished",
+        "error",
+        "canceled",
+        "ambiguous",
+        "deferred_quota",
+    ]
+    estimate_credits: float
+    actual_credits: NullableNumber
+    actual_provenance: Literal["provider-reported", "unavailable"]
+    submitted_at: NullableTimestamp
+    started_at: NullableTimestamp
+    completed_at: NullableTimestamp
+    output_bytes: int | None
+
+
+class CreditLedgerEntry(TypedDict):
+    kind: Literal["CreditLedgerEntry"]
+    schema_version: Literal["1.0.0"]
+    ledger_entry_id: Identifier
+    job_id: Identifier
+    provider_job_id: Identifier | None
+    aoi_id: Identifier
+    policy_version: Version
+    priority: Literal["P0", "P1", "P2"]
+    accounting_month: str
+    allocation_bucket: Literal["scheduled", "retry", "priority"]
+    entry_kind: Literal["estimate", "actual", "adjustment", "release"]
+    credits: float
+    provenance: Literal["estimated", "provider-reported", "derived", "unavailable"]
+    status: Literal["reserved", "recorded", "released"]
+    created_at: Timestamp
+
+
 class AlertDelivery(TypedDict):
     kind: Literal["AlertDelivery"]
     schema_version: Literal["1.0.0"]
@@ -184,4 +248,7 @@ ContractModel: TypeAlias = (
     | CandidateAsset
     | Review
     | AlertDelivery
+    | ProviderUsageSnapshot
+    | ProviderJobRun
+    | CreditLedgerEntry
 )

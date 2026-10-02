@@ -1,0 +1,12 @@
+{
+  "fixture_version": "1.0.0",
+  "sanitized": true,
+  "id": "SENTINEL1_GRD",
+  "title": "Sentinel-1 SAR GRD: C-band Synthetic Aperture Radar Ground Range Detected.",
+  "cube:dimensions": {
+    "bands": {
+      "type": "bands",
+      "values": ["HH", "HV", "VH", "VV"]
+    }
+  }
+}

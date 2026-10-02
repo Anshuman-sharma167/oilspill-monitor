@@ -1,0 +1,13 @@
+{
+  "fixture_version": "1.0.0",
+  "sanitized": true,
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "S1A_IW_GRDH_1SDV_20250131T010348_20250131T010403_057681_071BF1_F170_COG",
+      "collection": "sentinel-1-grd",
+      "datetime": "2025-01-31T01:03:48.000Z",
+      "polarizations": ["VV", "VH"]
+    }
+  ]
+}

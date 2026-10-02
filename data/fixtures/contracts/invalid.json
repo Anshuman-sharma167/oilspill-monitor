@@ -108,5 +108,41 @@
       "deferred_quota_at": null,
       "failure": null
     }
+  },
+  {
+    "name": "provider usage exceeds allowance",
+    "model": "ProviderUsageSnapshot",
+    "payload": {
+      "kind": "ProviderUsageSnapshot",
+      "schema_version": "1.0.0",
+      "allowance": 100,
+      "used": 101,
+      "fetched_at": "2026-10-01T12:00:00.000Z",
+      "accounting_month": "2026-10",
+      "scope": "cdse-openeo-service-account",
+      "provenance": "provider-reported"
+    }
+  },
+  {
+    "name": "actual cost without provider provenance",
+    "model": "ProviderJobRun",
+    "payload": {
+      "kind": "ProviderJobRun",
+      "schema_version": "1.0.0",
+      "job_id": "job:synthetic-test",
+      "provider_job_id": "j-synthetic",
+      "aoi_id": "aoi:synthetic-test",
+      "policy_version": "1.0.0",
+      "graph_version": "1.0.0",
+      "priority": "P2",
+      "state": "finished",
+      "estimate_credits": 2,
+      "actual_credits": 3,
+      "actual_provenance": "unavailable",
+      "submitted_at": "2026-10-01T12:00:00.000Z",
+      "started_at": "2026-10-01T12:01:00.000Z",
+      "completed_at": "2026-10-01T12:02:00.000Z",
+      "output_bytes": 123
+    }
   }
 ]

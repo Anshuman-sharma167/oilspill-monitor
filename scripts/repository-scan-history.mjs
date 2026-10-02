@@ -30,11 +30,26 @@ const addHistoricalLocation = (pathsByObject, object, path, commit) => {
   if (/^0+$/u.test(object)) return;
   const normalized = normalizePath(path);
   const existing = pathsByObject.get(object) ?? new Map();
-  if (!existing.has(normalized)) existing.set(normalized, commit);
+  if (!existing.has(normalized) || existing.get(normalized) === undefined)
+    existing.set(normalized, commit);
   pathsByObject.set(object, existing);
 };
 
 const historicalPaths = (git) => {
+  const namedObjects = git(["rev-list", "--objects", "--all"])
+    .split(/\r?\n/u)
+    .filter(Boolean);
+  const pathsByObject = new Map();
+  for (const line of namedObjects) {
+    const separator = line.indexOf(" ");
+    if (separator === -1) continue;
+    const object = line.slice(0, separator);
+    const path = line.slice(separator + 1);
+    if (/^[0-9a-f]+$/u.test(object) && path.length > 0) {
+      addHistoricalLocation(pathsByObject, object, path);
+    }
+  }
+
   const output = git([
     "log",
     "--all",
@@ -46,7 +61,6 @@ const historicalPaths = (git) => {
     "-z",
     "--format=%x1e%H%x00",
   ]);
-  const pathsByObject = new Map();
   const rawEntry =
     /:[0-7]{6} [0-7]{6} ([0-9a-f]+) ([0-9a-f]+) [A-Z][0-9]*\0([^\0]*)\0/gu;
 

@@ -17,6 +17,9 @@ const modelNames = [
   "CandidateAsset",
   "Review",
   "AlertDelivery",
+  "ProviderUsageSnapshot",
+  "ProviderJobRun",
+  "CreditLedgerEntry",
 ];
 
 const refName = (ref) => ref.split("/").at(-1);

@@ -12,7 +12,10 @@
     { "$ref": "#/$defs/Candidate" },
     { "$ref": "#/$defs/CandidateAsset" },
     { "$ref": "#/$defs/Review" },
-    { "$ref": "#/$defs/AlertDelivery" }
+    { "$ref": "#/$defs/AlertDelivery" },
+    { "$ref": "#/$defs/ProviderUsageSnapshot" },
+    { "$ref": "#/$defs/ProviderJobRun" },
+    { "$ref": "#/$defs/CreditLedgerEntry" }
   ],
   "$defs": {
     "Identifier": {
@@ -89,7 +92,9 @@
             "WORKER_INTERRUPTED",
             "CORRUPTED_OUTPUT",
             "CONTRACT_VALIDATION_FAILED",
-            "INTERNAL_ERROR"
+            "INTERNAL_ERROR",
+            "PROVIDER_JOB_FAILED",
+            "PROVIDER_JOB_CANCELLED"
           ]
         },
         "stage": {
@@ -376,6 +381,137 @@
           "enum": ["approved", "rejected", "needs_more_information"]
         },
         "reviewed_at": { "$ref": "#/$defs/Timestamp" }
+      }
+    },
+    "ProviderUsageSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "allowance",
+        "used",
+        "fetched_at",
+        "accounting_month",
+        "scope",
+        "provenance"
+      ],
+      "properties": {
+        "kind": { "const": "ProviderUsageSnapshot" },
+        "schema_version": { "const": "1.0.0" },
+        "allowance": { "type": "number", "minimum": 0 },
+        "used": { "type": "number", "minimum": 0 },
+        "fetched_at": { "$ref": "#/$defs/Timestamp" },
+        "accounting_month": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "scope": { "const": "cdse-openeo-service-account" },
+        "provenance": { "const": "provider-reported" }
+      }
+    },
+    "ProviderJobRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "job_id",
+        "provider_job_id",
+        "aoi_id",
+        "policy_version",
+        "graph_version",
+        "priority",
+        "state",
+        "estimate_credits",
+        "actual_credits",
+        "actual_provenance",
+        "submitted_at",
+        "started_at",
+        "completed_at",
+        "output_bytes"
+      ],
+      "properties": {
+        "kind": { "const": "ProviderJobRun" },
+        "schema_version": { "const": "1.0.0" },
+        "job_id": { "$ref": "#/$defs/Identifier" },
+        "provider_job_id": {
+          "oneOf": [{ "$ref": "#/$defs/Identifier" }, { "type": "null" }]
+        },
+        "aoi_id": { "$ref": "#/$defs/Identifier" },
+        "policy_version": { "$ref": "#/$defs/Version" },
+        "graph_version": { "$ref": "#/$defs/Version" },
+        "priority": { "enum": ["P0", "P1", "P2"] },
+        "state": {
+          "enum": [
+            "reserved",
+            "submitting",
+            "submitted",
+            "queued",
+            "running",
+            "finished",
+            "error",
+            "canceled",
+            "ambiguous",
+            "deferred_quota"
+          ]
+        },
+        "estimate_credits": { "type": "number", "minimum": 0 },
+        "actual_credits": { "$ref": "#/$defs/NullableNumber" },
+        "actual_provenance": { "enum": ["provider-reported", "unavailable"] },
+        "submitted_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "started_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "completed_at": { "$ref": "#/$defs/NullableTimestamp" },
+        "output_bytes": {
+          "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+        }
+      }
+    },
+    "CreditLedgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema_version",
+        "ledger_entry_id",
+        "job_id",
+        "provider_job_id",
+        "aoi_id",
+        "policy_version",
+        "priority",
+        "accounting_month",
+        "allocation_bucket",
+        "entry_kind",
+        "credits",
+        "provenance",
+        "status",
+        "created_at"
+      ],
+      "properties": {
+        "kind": { "const": "CreditLedgerEntry" },
+        "schema_version": { "const": "1.0.0" },
+        "ledger_entry_id": { "$ref": "#/$defs/Identifier" },
+        "job_id": { "$ref": "#/$defs/Identifier" },
+        "provider_job_id": {
+          "oneOf": [{ "$ref": "#/$defs/Identifier" }, { "type": "null" }]
+        },
+        "aoi_id": { "$ref": "#/$defs/Identifier" },
+        "policy_version": { "$ref": "#/$defs/Version" },
+        "priority": { "enum": ["P0", "P1", "P2"] },
+        "accounting_month": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "allocation_bucket": { "enum": ["scheduled", "retry", "priority"] },
+        "entry_kind": {
+          "enum": ["estimate", "actual", "adjustment", "release"]
+        },
+        "credits": { "type": "number" },
+        "provenance": {
+          "enum": ["estimated", "provider-reported", "derived", "unavailable"]
+        },
+        "status": { "enum": ["reserved", "recorded", "released"] },
+        "created_at": { "$ref": "#/$defs/Timestamp" }
       }
     },
     "AlertDelivery": {
