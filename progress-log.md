@@ -67,3 +67,28 @@
   recurring pilot remains disabled, and deploying the migration to a Supabase
   project remains an environment step because this checkout has no linked
   project or database credentials.
+
+## 2026-10-03 — Part 8: reliable Sentinel-1 STAC discovery
+
+- Added protected 15-minute Supabase discovery, a 60-minute overlapping CDSE
+  STAC search with bounded retries and pagination, normalized scene metadata,
+  explicit missing-VH handling, and atomic PostGIS scene/AOI/job persistence.
+  Scene identity now includes provider, collection, and provider item ID.
+- Changed the discovery service, shared contracts and identities, server-only
+  configuration, Part 7 callers, a forward-only Part 8 migration and Edge
+  Function, synthetic fixtures, operations documentation, and focused tests.
+- Verification: `npm run test:part8` PASS (14/14); `npm run check` PASS (81
+  TypeScript and 2 Python tests plus all quality, integration, configuration,
+  container, and repository-scan gates); dependency audits PASS with no known
+  Node or Python vulnerabilities.
+- Security: the initial Codex Security diff scan found one medium unbounded
+  provider-response/geometry issue. Streamed body and geometry-complexity limits
+  were added with regression coverage; the final complete rescan found zero
+  findings.
+- Exit gate: **PASSED** against real PostgreSQL/PostGIS WASM. Ten identical
+  polls produced one scene, two jobs for the two positive-area AOI overlaps, no
+  duplicate logical identity, ten poll rows, preserved first-discovery time,
+  advanced last-discovery time, and no reset of an existing queued job.
+- Remaining limitation: hosted Supabase migration, Vault/Cron installation, and
+  Edge Function protection remain unverified because this checkout has no linked
+  project or credentials. The recurring Part 6 pilot remains disabled.

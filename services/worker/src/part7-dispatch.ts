@@ -303,7 +303,7 @@ export class Part7Dispatch {
     if (
       !items.features.some(
         (item) =>
-          sceneId("cdse-stac", item.id) === job.sceneId &&
+          sceneId("cdse-stac", item.id, item.collection) === job.sceneId &&
           item.polarizations.includes("VV") &&
           item.polarizations.includes("VH"),
       )

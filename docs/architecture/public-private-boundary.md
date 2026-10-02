@@ -13,3 +13,8 @@ Interfaces should pass identifiers and minimum necessary metadata. Logs and
 errors must avoid private payloads. A future release process must verify
 licences and provenance independently for every external dataset and model; the
 code licence does not cover those assets.
+
+Part 8 keeps scene, AOI, processing-job, and poll-run tables in `app_private`.
+Its two public RPC functions are service-role-only boundaries used by the
+protected Edge Function: one returns enabled AOI queries, and one atomically
+records a poll. Execute is revoked from `public`, `anon`, and `authenticated`.

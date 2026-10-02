@@ -42,6 +42,7 @@
     "test:part4": "tsx --test tests/unit/part4.test.ts",
     "test:part6": "tsx --test tests/unit/part6.test.ts",
     "test:part7": "tsx --test tests/unit/part7.test.ts",
+    "test:part8": "tsx --test tests/unit/part8.test.ts",
     "part7:pilot": "node --env-file=.env --import tsx scripts/part7-live-pilot.ts",
     "scan:repo": "node scripts/scan-repository.mjs",
     "scan:path": "node scripts/scan-path.mjs",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",
+    "@electric-sql/pglite-postgis": "0.2.8",
     "@eslint/js": "10.0.1",
     "@types/emscripten": "1.41.6",
     "@types/node": "26.6.2",

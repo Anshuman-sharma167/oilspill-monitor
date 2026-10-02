@@ -6,12 +6,12 @@ record on a matching idempotency key.
 
 ## Repeated discovery
 
-- Key: `(provider, provider_scene_id)`.
+- Key: `(provider, collection, provider_scene_id)`.
 - First call: derive `scene_id`, insert the scene, and set both discovery
   timestamps.
 - Repeat: update only mutable discovery metadata such as `last_discovered_at`;
   return the existing `scene_id`.
-- Enforcement: `scenes_provider_identity_key` plus the shared
+- Enforcement: `scenes_catalogue_identity_key` plus the shared
   `upsertDiscoveredScene` behavior.
 
 ## Retried worker or dispatcher

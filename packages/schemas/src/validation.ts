@@ -231,6 +231,27 @@ const validateAoiSemantics = (value: Record<string, unknown>): void => {
     );
 };
 
+const validateSceneSemantics = (value: Record<string, unknown>): void => {
+  if (
+    new Date(value.acquisition_end as string).valueOf() <
+    new Date(value.acquired_at as string).valueOf()
+  )
+    fail("$.acquisition_end", "must not be earlier than acquisition start");
+  const bands = value.polarizations as string[];
+  const disposition = value.polarization_disposition;
+  if (
+    (disposition === "dual_band" &&
+      (!bands.includes("VV") || !bands.includes("VH"))) ||
+    (disposition === "missing_vh" &&
+      (!bands.includes("VV") || bands.includes("VH"))) ||
+    (disposition === "invalid_polarization" && bands.includes("VV"))
+  )
+    fail(
+      "$.polarization_disposition",
+      "must match the normalized polarization list",
+    );
+};
+
 const validateJobSemantics = (value: Record<string, unknown>): void => {
   const state = value.state as string;
   const stateTimestamp = `${state}_at`;
@@ -324,8 +345,10 @@ export const validateContract = (
     validateGeometry(record.geometry as Record<string, unknown>);
     validateAoiSemantics(record);
   }
-  if (modelName === "Scene")
+  if (modelName === "Scene") {
     validateGeometry(record.footprint as Record<string, unknown>);
+    validateSceneSemantics(record);
+  }
   if (modelName === "Candidate")
     validateGeometry(record.geometry as Record<string, unknown>);
   if (modelName === "ProcessingJob") validateJobSemantics(record);

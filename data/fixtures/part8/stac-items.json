@@ -1,0 +1,107 @@
+{
+  "fixture_version": "1.0.0",
+  "sanitized": true,
+  "features": [
+    {
+      "type": "Feature",
+      "id": "synthetic-iw-grd-001",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0.5, 0.5],
+            [1.5, 0.5],
+            [1.5, 1.5],
+            [0.5, 1.5],
+            [0.5, 0.5]
+          ]
+        ]
+      },
+      "properties": {
+        "start_datetime": "2026-10-03T00:00:00.000Z",
+        "end_datetime": "2026-10-03T00:01:00.000Z",
+        "published": "2026-10-03T00:05:00.000Z",
+        "platform": "sentinel-1a",
+        "sat:orbit_state": "ascending",
+        "sat:relative_orbit": 42,
+        "sar:instrument_mode": "IW",
+        "product:type": "IW_GRDH_1S",
+        "sar:polarizations": ["vv", "VH"]
+      },
+      "assets": {
+        "vv": {
+          "href": "https://example.invalid/synthetic/vv.tif?download=1",
+          "type": "image/tiff",
+          "roles": ["data"]
+        },
+        "vh": {
+          "href": "s3://synthetic-public-fixture/vh.tif",
+          "type": "image/tiff",
+          "roles": ["data"]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "synthetic-iw-grd-missing-vh",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [2, 2],
+              [3, 2],
+              [3, 3],
+              [2, 3],
+              [2, 2]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "datetime": "2026-10-03T00:02:00.000Z",
+        "platform": "sentinel-1c",
+        "sat:orbit_state": "descending",
+        "sat:relative_orbit": 7,
+        "sar:instrument_mode": "IW",
+        "product:type": "IW_GRDH_1S",
+        "sar:polarizations": ["VV"]
+      },
+      "assets": {
+        "vv": {
+          "href": "https://example.invalid/synthetic/missing-vh-vv.tif",
+          "roles": ["data"]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "synthetic-malformed-geometry",
+      "collection": "sentinel-1-grd",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 0],
+            [2, 2],
+            [0, 2],
+            [2, 0],
+            [0, 0]
+          ]
+        ]
+      },
+      "properties": {
+        "datetime": "2026-10-03T00:03:00.000Z",
+        "platform": "sentinel-1a",
+        "sat:orbit_state": "ascending",
+        "sat:relative_orbit": 1,
+        "sar:instrument_mode": "IW",
+        "product:type": "IW_GRDH_1S",
+        "sar:polarizations": ["VV", "VH"]
+      },
+      "assets": {}
+    }
+  ]
+}

@@ -16,8 +16,17 @@ export const processingJobId = (
 export const candidateId = (jobId: string, detectionKey: string): string =>
   stableId("candidate", [jobId, detectionKey]);
 
-export const sceneId = (provider: string, providerSceneId: string): string =>
-  stableId("scene", [provider, providerSceneId]);
+export const sceneId = (
+  provider: string,
+  providerSceneId: string,
+  collection?: string,
+): string =>
+  stableId(
+    "scene",
+    collection === undefined
+      ? [provider, providerSceneId]
+      : [provider, collection, providerSceneId],
+  );
 
 export const alertDeliveryId = (
   candidateIdentifier: string,
@@ -29,7 +38,7 @@ export const upsertDiscoveredScene = (
   scenes: Map<string, Scene>,
   incoming: Scene,
 ): Scene => {
-  const key = `${incoming.provider}\u001f${incoming.provider_scene_id}`;
+  const key = `${incoming.provider}\u001f${incoming.collection}\u001f${incoming.provider_scene_id}`;
   const existing = scenes.get(key);
   if (existing !== undefined) {
     existing.last_discovered_at = incoming.last_discovered_at;

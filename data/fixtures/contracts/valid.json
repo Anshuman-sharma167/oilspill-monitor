@@ -36,8 +36,15 @@
     "schema_version": "1.0.0",
     "scene_id": "scene:synthetic-test",
     "provider": "synthetic-provider",
+    "collection": "sentinel-1-grd",
     "provider_scene_id": "synthetic-scene-001",
     "acquired_at": "2026-01-01T00:00:00.000Z",
+    "acquisition_end": "2026-01-01T00:01:00.000Z",
+    "platform": "sentinel-1a",
+    "orbit_direction": "ascending",
+    "relative_orbit": 42,
+    "product_type": "IW_GRDH_1S",
+    "polarizations": ["VH", "VV"],
     "footprint": {
       "type": "Polygon",
       "coordinates": [
@@ -50,8 +57,19 @@
       ]
     },
     "external_crs": "EPSG:4326",
+    "published_at": "2026-01-01T00:02:00.000Z",
     "first_discovered_at": "2026-01-01T00:01:00.000Z",
-    "last_discovered_at": "2026-01-01T00:01:00.000Z"
+    "last_discovered_at": "2026-01-01T00:01:00.000Z",
+    "asset_references": [
+      {
+        "key": "vv",
+        "href": "https://example.invalid/synthetic/vv.tif",
+        "type": "image/tiff",
+        "roles": ["data"]
+      }
+    ],
+    "raw_metadata_checksum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "polarization_disposition": "dual_band"
   },
   "ProcessingJob": {
     "kind": "ProcessingJob",
