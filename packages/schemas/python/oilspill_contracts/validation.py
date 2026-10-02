@@ -271,6 +271,34 @@ def _validate_job(value: JsonObject) -> None:
         _fail("$.failure", "is only allowed in failed state")
 
 
+def _validate_provider_accounting(model_name: str, value: JsonObject) -> None:
+    if model_name == "ProviderUsageSnapshot":
+        allowance = value.get("allowance")
+        used = value.get("used")
+        if isinstance(allowance, (int, float)) and isinstance(used, (int, float)):
+            if used > allowance:
+                _fail("$.used", "must not exceed the provider allowance")
+    elif model_name == "ProviderJobRun":
+        if (value.get("actual_credits") is None) != (
+            value.get("actual_provenance") == "unavailable"
+        ):
+            _fail("$.actual_provenance", "must match actual-credit availability")
+        if value.get("state") == "finished" and value.get("completed_at") is None:
+            _fail("$.completed_at", "is required for a finished job")
+        if (value.get("provider_job_id") is None) != (
+            value.get("submitted_at") is None
+        ):
+            _fail("$.submitted_at", "must match provider-job availability")
+    elif model_name == "CreditLedgerEntry":
+        credits = value.get("credits")
+        if (
+            value.get("entry_kind") != "adjustment"
+            and isinstance(credits, (int, float))
+            and credits < 0
+        ):
+            _fail("$.credits", "must be non-negative for this entry kind")
+
+
 _ASSET_MEDIA_TYPES = {
     "context_webp": "image/webp",
     "detail_webp": "image/webp",
@@ -297,6 +325,8 @@ def validate_contract(model_name: str, value: JsonValue) -> None:
         _validate_geometry(_object(record.get("geometry"), "$.geometry"))
     elif model_name == "ProcessingJob":
         _validate_job(record)
+    elif model_name in ("ProviderUsageSnapshot", "ProviderJobRun", "CreditLedgerEntry"):
+        _validate_provider_accounting(model_name, record)
     elif model_name == "CandidateAsset":
         if _ASSET_MEDIA_TYPES.get(str(record.get("asset_type"))) != record.get(
             "media_type"

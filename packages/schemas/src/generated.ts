@@ -1,6 +1,6 @@
 // Generated from packages/schemas/schema/contracts.schema.json. Do not edit.
 export const contractSchemaVersion = "1.0.0" as const;
-export const contractModelNames = ["AOI","Scene","ProcessingJob","ModelVersion","Candidate","CandidateAsset","Review","AlertDelivery"] as const;
+export const contractModelNames = ["AOI","Scene","ProcessingJob","ModelVersion","Candidate","CandidateAsset","Review","AlertDelivery","ProviderUsageSnapshot","ProviderJobRun","CreditLedgerEntry"] as const;
 
 export type Identifier = string;
 
@@ -21,7 +21,7 @@ export type PolygonCoordinates = Array<LinearRing>;
 export type GeoJSONGeometry = { "type": "Polygon"; "coordinates": PolygonCoordinates; } | { "type": "MultiPolygon"; "coordinates": Array<PolygonCoordinates>; };
 
 export interface Failure {
-  "code": "OPENEO_TIMEOUT" | "WORKER_INTERRUPTED" | "CORRUPTED_OUTPUT" | "CONTRACT_VALIDATION_FAILED" | "INTERNAL_ERROR";
+  "code": "OPENEO_TIMEOUT" | "WORKER_INTERRUPTED" | "CORRUPTED_OUTPUT" | "CONTRACT_VALIDATION_FAILED" | "INTERNAL_ERROR" | "PROVIDER_JOB_FAILED" | "PROVIDER_JOB_CANCELLED";
   "stage": "discovery" | "preprocessing" | "inferencing" | "storage";
   "retryable": boolean;
   "detail": string;
@@ -129,6 +129,54 @@ export interface Review {
   "reviewed_at": Timestamp;
 }
 
+export interface ProviderUsageSnapshot {
+  "kind": "ProviderUsageSnapshot";
+  "schema_version": "1.0.0";
+  "allowance": number;
+  "used": number;
+  "fetched_at": Timestamp;
+  "accounting_month": string;
+  "scope": "cdse-openeo-service-account";
+  "provenance": "provider-reported";
+}
+
+export interface ProviderJobRun {
+  "kind": "ProviderJobRun";
+  "schema_version": "1.0.0";
+  "job_id": Identifier;
+  "provider_job_id": Identifier | null;
+  "aoi_id": Identifier;
+  "policy_version": Version;
+  "graph_version": Version;
+  "priority": "P0" | "P1" | "P2";
+  "state": "reserved" | "submitting" | "submitted" | "queued" | "running" | "finished" | "error" | "canceled" | "ambiguous" | "deferred_quota";
+  "estimate_credits": number;
+  "actual_credits": NullableNumber;
+  "actual_provenance": "provider-reported" | "unavailable";
+  "submitted_at": NullableTimestamp;
+  "started_at": NullableTimestamp;
+  "completed_at": NullableTimestamp;
+  "output_bytes": number | null;
+}
+
+export interface CreditLedgerEntry {
+  "kind": "CreditLedgerEntry";
+  "schema_version": "1.0.0";
+  "ledger_entry_id": Identifier;
+  "job_id": Identifier;
+  "provider_job_id": Identifier | null;
+  "aoi_id": Identifier;
+  "policy_version": Version;
+  "priority": "P0" | "P1" | "P2";
+  "accounting_month": string;
+  "allocation_bucket": "scheduled" | "retry" | "priority";
+  "entry_kind": "estimate" | "actual" | "adjustment" | "release";
+  "credits": number;
+  "provenance": "estimated" | "provider-reported" | "derived" | "unavailable";
+  "status": "reserved" | "recorded" | "released";
+  "created_at": Timestamp;
+}
+
 export interface AlertDelivery {
   "kind": "AlertDelivery";
   "schema_version": "1.0.0";
@@ -142,4 +190,4 @@ export interface AlertDelivery {
   "delivered_at": NullableTimestamp;
 }
 
-export type ContractModel = AOI | Scene | ProcessingJob | ModelVersion | Candidate | CandidateAsset | Review | AlertDelivery;
+export type ContractModel = AOI | Scene | ProcessingJob | ModelVersion | Candidate | CandidateAsset | Review | AlertDelivery | ProviderUsageSnapshot | ProviderJobRun | CreditLedgerEntry;

@@ -1,0 +1,15 @@
+{
+  "evidence_version": "1.0.0",
+  "graph_version": "1.0.0",
+  "local_job_id": "job:0fae901c0a3e24d94837f1c5f0d7ae03",
+  "provider_job_id": "j-2610022110244dc78a74cb1fd08b3456",
+  "provider_status": "finished",
+  "submitted_at": "2026-10-02T21:10:30.715Z",
+  "start_requested_at": "2026-10-02T21:10:31.471Z",
+  "provider_updated_at": "2026-10-02T21:12:11.000Z",
+  "completed_at": "2026-10-02T21:14:29.851Z",
+  "billed_credits": 4,
+  "actual_cost_provenance": "provider-reported",
+  "output_bytes": 31755,
+  "output_size_provenance": "provider-reported"
+}

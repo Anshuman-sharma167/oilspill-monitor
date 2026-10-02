@@ -275,6 +275,34 @@ const validateJobSemantics = (value: Record<string, unknown>): void => {
   }
 };
 
+const validateProviderAccounting = (
+  modelName: ContractModelName,
+  value: Record<string, unknown>,
+): void => {
+  if (
+    modelName === "ProviderUsageSnapshot" &&
+    (value.used as number) > (value.allowance as number)
+  )
+    fail("$.used", "must not exceed the provider allowance");
+  if (modelName === "ProviderJobRun") {
+    if (
+      (value.actual_credits === null) !==
+      (value.actual_provenance === "unavailable")
+    )
+      fail("$.actual_provenance", "must match actual-credit availability");
+    if (value.state === "finished" && value.completed_at === null)
+      fail("$.completed_at", "is required for a finished job");
+    if ((value.provider_job_id === null) !== (value.submitted_at === null))
+      fail("$.submitted_at", "must match provider-job availability");
+  }
+  if (
+    modelName === "CreditLedgerEntry" &&
+    value.entry_kind !== "adjustment" &&
+    (value.credits as number) < 0
+  )
+    fail("$.credits", "must be non-negative for this entry kind");
+};
+
 const assetMediaTypes: Record<string, string> = {
   context_webp: "image/webp",
   detail_webp: "image/webp",
@@ -301,6 +329,7 @@ export const validateContract = (
   if (modelName === "Candidate")
     validateGeometry(record.geometry as Record<string, unknown>);
   if (modelName === "ProcessingJob") validateJobSemantics(record);
+  validateProviderAccounting(modelName, record);
   if (
     modelName === "CandidateAsset" &&
     assetMediaTypes[record.asset_type as string] !== record.media_type

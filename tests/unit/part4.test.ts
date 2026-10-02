@@ -40,6 +40,13 @@ const outputOf = (result: ReturnType<typeof spawnSync>) =>
 const expectedEnvironmentNames = [
   "CDSE_CLIENT_ID",
   "CDSE_CLIENT_SECRET",
+  "CDSE_COLLECTION_ID",
+  "CDSE_VV_BAND",
+  "CDSE_VH_BAND",
+  "CDSE_TOKEN_SAFETY_MS",
+  "CDSE_USAGE_CACHE_MS",
+  "CDSE_FREE_CREDIT_REFERENCE",
+  "CDSE_DISPATCH_ENABLED",
   "SUPABASE_URL",
   "SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
