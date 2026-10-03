@@ -89,6 +89,11 @@
   polls produced one scene, two jobs for the two positive-area AOI overlaps, no
   duplicate logical identity, ten poll rows, preserved first-discovery time,
   advanced last-discovery time, and no reset of an existing queued job.
-- Remaining limitation: hosted Supabase migration, Vault/Cron installation, and
-  Edge Function protection remain unverified because this checkout has no linked
-  project or credentials. The recurring Part 6 pilot remains disabled.
+- Hosted verification: migrations are applied to the healthy Supabase project,
+  the JWT-protected Edge Function is active, all three named Vault values are
+  present, and exactly one active `*/15 * * * *` Cron job uses Vault lookups
+  without embedding decrypted values. A protected invocation returned `200` and
+  recorded a successful zero-AOI poll with no provider request or created work.
+- Remaining limitation: the recurring Part 6 pilot AOI remains disabled because
+  its authenticated openEO credit estimate is still pending. Scheduled Part 8
+  polls therefore remain safe no-op runs until that separate gate is satisfied.

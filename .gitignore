@@ -42,6 +42,7 @@ kubeconfig
 .azure/
 .config/gcloud/
 supabase/.temp/
+supabase/.branches/
 
 # Dependencies, caches, logs, and build output
 node_modules/
