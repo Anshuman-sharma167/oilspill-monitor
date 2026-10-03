@@ -461,7 +461,11 @@ begin
         execute 'create extension if not exists pg_cron with schema pg_catalog';
         execute 'create extension if not exists pg_net with schema extensions';
         execute 'create extension if not exists supabase_vault with schema vault';
-        execute 'select cron.unschedule($1)'
+        execute $unschedule$
+            select cron.unschedule(jobid)
+            from cron.job
+            where jobname = $1
+        $unschedule$
         using 'part8-stac-discovery';
         v_command := $scheduled$
             select net.http_post(

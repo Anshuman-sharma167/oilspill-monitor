@@ -1,0 +1,22 @@
+# Local Supabase CLI configuration for migration and Edge Function verification.
+# Hosted project settings and secrets are deliberately not stored here.
+project_id = "oilspill-monitor"
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+inspector_port = 8083
+deno_version = 2
