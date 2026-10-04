@@ -43,7 +43,7 @@
     "test:part6": "tsx --test tests/unit/part6.test.ts",
     "test:part7": "tsx --test tests/unit/part7.test.ts",
     "test:part8": "tsx --test tests/unit/part8.test.ts",
-    "test:part9": "tsx --test tests/unit/part9.test.ts",
+    "test:part9": "tsx --test tests/unit/part9.test.ts tests/unit/part9-live.test.ts",
     "part9:run": "tsx services/worker/src/part9-run.ts",
     "test:part9:postgres": "node scripts/part9-postgres-exit-gate.mjs",
     "part7:pilot": "node --env-file=.env --import tsx scripts/part7-live-pilot.ts",
@@ -68,6 +68,7 @@
     "eslint": "10.11.0",
     "globals": "17.12.0",
     "prettier": "3.9.8",
+    "supabase": "2.119.0",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "8.70.0"

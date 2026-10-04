@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@db/postgres": "jsr:@db/postgres@0.19.5",
+    "@supabase/functions-js": "jsr:@supabase/functions-js@2.5.0",
+    "jose": "npm:jose@6.2.12"
+  }
+}
