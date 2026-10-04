@@ -30,6 +30,7 @@ const migrations = [
   "20261001100000_part7_cdse_accounting.sql",
   "20261002214246_part8_stac_discovery.sql",
   "20261003163000_part9_postgres_queue.sql",
+  "20261004151233_part9_job_scoped_claim.sql",
 ];
 
 test("Part 9 configuration and error policy are bounded and centralized", () => {
@@ -422,6 +423,22 @@ test("migration applies in order and enforces queue, leases, transitions, and ch
     null,
     "deferred_quota",
   );
+  const scopedJobId = "job:00000000000000000000000000000099";
+  await insertJob(scopedJobId, "scene:one", "P2", "2026-10-03T06:00:00Z");
+  const scopedClaim = await database.query<{ job_id: string }>(
+    "select job_id from app_private.claim_processing_job_by_id($1, $2, 300, $3)",
+    [scopedJobId, "worker:scoped", instant.toISOString()],
+  );
+  assert.equal(scopedClaim.rows[0]?.job_id, scopedJobId);
+  const wrongScopedClaim = await database.query<{ job_id: string }>(
+    "select job_id from app_private.claim_processing_job_by_id($1, $2, 300, $3)",
+    [
+      "job:00000000000000000000000000000098",
+      "worker:scoped",
+      instant.toISOString(),
+    ],
+  );
+  assert.equal(wrongScopedClaim.rows.length, 0);
 
   const claims = await Promise.all(
     Array.from({ length: 5 }, (_, index) =>

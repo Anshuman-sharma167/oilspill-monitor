@@ -20,3 +20,9 @@ enabled = true
 policy = "per_worker"
 inspector_port = 8083
 deno_version = 2
+
+[functions.part9-job-broker]
+enabled = true
+verify_jwt = false
+import_map = "./functions/part9-job-broker/deno.json"
+entrypoint = "./functions/part9-job-broker/index.ts"

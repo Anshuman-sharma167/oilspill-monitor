@@ -101,9 +101,31 @@ pinned to full commit SHAs and concurrency is keyed by job ID.
 
 Live execution is deliberately disabled unless
 `PART9_LIVE_DISPATCH_ENABLED=true` and the OIDC audience/configuration endpoint
-are configured and verified. The checked-in runner boundary stops with
-`PART9_LIVE_WORKER_NOT_CONFIGURED`; it does not fall back to a long-lived
-Supabase service key.
+are configured and verified. The runner receives a ten-minute, job-scoped token
+from `part9-job-broker`; it never receives a database URL or Supabase service
+key. The broker accepts GitHub OIDC only when the audience, repository name,
+immutable repository ID, branch, event, workflow ref, and hosted-runner claim
+match the allow-list. Its database route rejects a token used for any other job.
+
+The Edge Function connects to the private PostgreSQL schema with Supabase's
+server-side `SUPABASE_DB_URL`. Its `verify_jwt = false` setting only bypasses
+the Supabase gateway JWT format: the function itself verifies GitHub's RS256
+token against GitHub's published JWKS before issuing a broker session.
+
+Required Supabase Edge Function settings are:
+
+- `PART9_OIDC_AUDIENCE=urn:oilspill-monitor:part9`
+- `PART9_ALLOWED_REPOSITORY=Anshuman-sharma167/oilspill-monitor`
+- `PART9_ALLOWED_REPOSITORY_ID=1380217446`
+- `PART9_ALLOWED_REF=refs/heads/main`
+- `PART9_ALLOWED_WORKFLOW_REF=Anshuman-sharma167/oilspill-monitor/.github/workflows/part9-process-job.yml@refs/heads/main`
+- `PART9_JOB_SESSION_SECRET` with at least 32 random bytes
+
+Required GitHub Actions variables are:
+
+- `PART9_LIVE_DISPATCH_ENABLED=false` until the controlled live test passes
+- `PART9_OIDC_AUDIENCE=urn:oilspill-monitor:part9`
+- `PART9_JOB_CONFIG_URL=https://<project-ref>.supabase.co/functions/v1/part9-job-broker`
 
 ## Diagnosis and recovery commands
 
@@ -138,6 +160,7 @@ Data API schemas and grant no browser access.
 PGlite verifies migration order, constraints, functions, deterministic claims,
 fencing, checkpoints, retries, and recovery. It is not evidence for independent
 PostgreSQL sessions. The real exit gate requires `psql` and a disposable
-PostgreSQL/PostGIS database. Hosted migration, GitHub App dispatch, OIDC
-exchange, and live provider reconciliation must be reported separately until
-actually run.
+PostgreSQL/PostGIS database. GitHub App dispatch and live provider
+reconciliation remain separately reported operations. The OIDC broker and
+job-scoped worker route have their own hosted verification and must not be
+treated as proof of later SAR or model work.
