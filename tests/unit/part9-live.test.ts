@@ -102,6 +102,7 @@ test("broker verifies GitHub identity and issues only short-lived job config", (
     assert.match(broker, new RegExp(claim, "u"));
   assert.match(broker, /algorithms: \["RS256"\]/u);
   assert.match(broker, /setExpirationTime\("10m"\)/u);
+  assert.match(broker, /PART9_BROKER_PUBLIC_URL/u);
   assert.match(broker, /claim_processing_job_by_id/u);
   assert.match(broker, /jobId: row\.job_id/u);
   assert.match(broker, /claimToken: row\.claim_token/u);

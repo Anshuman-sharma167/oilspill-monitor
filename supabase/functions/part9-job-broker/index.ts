@@ -151,12 +151,18 @@ const configuration = async (request: Request) => {
     .setIssuedAt()
     .setExpirationTime("10m")
     .sign(sessionSecret);
-  const url = new URL(request.url);
-  url.pathname = url.pathname.replace(/\/config\/?$/u, "").replace(/\/$/u, "");
-  url.search = "";
+  const url = new URL(requiredEnvironment("PART9_BROKER_PUBLIC_URL"));
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash
+  )
+    throw new Error("INVALID_BROKER_PUBLIC_URL");
   return json(200, {
     job_id: jobId,
-    broker_url: url.toString(),
+    broker_url: url.toString().replace(/\/$/u, ""),
     job_token: token,
   });
 };

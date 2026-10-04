@@ -119,6 +119,7 @@ Required Supabase Edge Function settings are:
 - `PART9_ALLOWED_REPOSITORY_ID=1380217446`
 - `PART9_ALLOWED_REF=refs/heads/main`
 - `PART9_ALLOWED_WORKFLOW_REF=Anshuman-sharma167/oilspill-monitor/.github/workflows/part9-process-job.yml@refs/heads/main`
+- `PART9_BROKER_PUBLIC_URL=https://<project-ref>.supabase.co/functions/v1/part9-job-broker`
 - `PART9_JOB_SESSION_SECRET` with at least 32 random bytes
 
 Required GitHub Actions variables are:
