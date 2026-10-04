@@ -29,6 +29,20 @@ publish or retain an existing object with the same checksum. A different
 checksum at the same immutable asset key is `CORRUPTED_OUTPUT`, not an
 overwrite.
 
+Part 9 adds a durable lease and immutable stage marker around that identity:
+
+- A worker claim changes one eligible `queued` row to `preprocessing` in the
+  same transaction that increments its attempt and creates a claim token.
+- Every renewal, state change, failure, and new checkpoint compares the current
+  claim token. An expired or replaced worker cannot commit later work.
+- A stage marker is keyed by `(job_id, stage, stage_version)`. The same checksum
+  returns the existing marker. A different checksum is `CORRUPTED_OUTPUT` and
+  never replaces the first result.
+- Retry and lease recovery preserve valid markers and the existing provider job
+  ID. They do not resubmit an openEO job whose durable provider ID exists.
+- GitHub Actions concurrency is an extra guard only. PostgreSQL remains the
+  authority for claims and leases.
+
 ## Repeated alert approval
 
 - Key: `(candidate_id, review_id, channel)`.

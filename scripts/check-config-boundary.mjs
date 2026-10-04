@@ -6,6 +6,10 @@ const prohibitedNames = [
   "CDSE_CLIENT_ID",
   "CDSE_CLIENT_SECRET",
   "PART8_CRON_SECRET",
+  "PART9_WORKER_ID",
+  "PART9_GITHUB_APP_ID",
+  "PART9_GITHUB_APP_INSTALLATION_ID",
+  "PART9_GITHUB_APP_PRIVATE_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "R2_ENDPOINT",
   "R2_ACCESS_KEY_ID",
@@ -13,7 +17,6 @@ const prohibitedNames = [
   "R2_BUCKET",
   "TELEGRAM_BOT_TOKEN",
   "TELEGRAM_CHAT_ID",
-  "GITHUB_DISPATCH_TOKEN",
 ];
 const prohibitedPatterns = [
   /packages\/config\/src\/server/iu,
