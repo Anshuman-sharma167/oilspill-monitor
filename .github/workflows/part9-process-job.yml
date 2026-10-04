@@ -1,0 +1,74 @@
+name: Process one queued job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Immutable processing job ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: part9-${{ inputs.job_id }}
+  cancel-in-progress: false
+
+jobs:
+  process:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Keep live dispatch fail-closed
+        env:
+          ENABLED: ${{ vars.PART9_LIVE_DISPATCH_ENABLED }}
+        run: |
+          test "$ENABLED" = "true" || {
+            echo "Part 9 live dispatch is disabled"
+            exit 78
+          }
+
+      - name: Validate job ID
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+        run: |
+          [[ "$JOB_ID" =~ ^job:[0-9a-f]{32}$ ]] || exit 2
+
+      - name: Check out the trusted worker
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Retrieve authoritative job configuration with OIDC
+        env:
+          AUDIENCE: ${{ vars.PART9_OIDC_AUDIENCE }}
+          CONFIG_URL: ${{ vars.PART9_JOB_CONFIG_URL }}
+          JOB_ID: ${{ inputs.job_id }}
+        run: |
+          test -n "$AUDIENCE" && test -n "$CONFIG_URL"
+          token_response="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$AUDIENCE")"
+          oidc_token="$(node -e 'const fs=require("fs");const v=JSON.parse(fs.readFileSync(0,"utf8")).value;if(typeof v!=="string")process.exit(2);process.stdout.write(v)' <<<"$token_response")"
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $oidc_token" \
+            -H "Content-Type: application/json" \
+            --data "{\"job_id\":\"$JOB_ID\"}" \
+            --output "$RUNNER_TEMP/part9-job-config.json" \
+            "$CONFIG_URL"
+          test -s "$RUNNER_TEMP/part9-job-config.json"
+
+      - name: Run the bounded worker boundary
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          PART9_JOB_CONFIG_FILE: ${{ runner.temp }}/part9-job-config.json
+        run: npm run part9:run

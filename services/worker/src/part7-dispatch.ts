@@ -112,7 +112,9 @@ export class Part7Dispatch {
         !source.rows[0] ||
         !source.rows[0].enabled ||
         source.rows[0].priority !== job.priority ||
-        source.rows[0].state !== (reconsider ? "deferred_quota" : "queued")
+        (reconsider
+          ? source.rows[0].state !== "deferred_quota"
+          : !["discovered", "queued"].includes(source.rows[0].state))
       )
         throw new Error("PART7_JOB_NOT_ELIGIBLE");
       const month = this.now().toISOString().slice(0, 7);
@@ -249,6 +251,13 @@ export class Part7Dispatch {
           ],
         );
       } else {
+        if (source.rows[0].state === "discovered") {
+          await this.database.query(
+            `update app_private.processing_jobs
+             set state = 'queued', queued_at = $2 where job_id = $1`,
+            [job.localJobId, decisionAt],
+          );
+        }
         if (reconsider) {
           await this.database.query(
             `update app_private.processing_jobs
@@ -447,23 +456,8 @@ export class Part7Dispatch {
           outputBytes,
         ],
       );
-      if (state === "running") {
-        await this.database.query(
-          `update app_private.processing_jobs
-           set state = 'preprocessing', preprocessing_at = coalesce(preprocessing_at, $2)
-           where job_id = $1 and state in ('queued', 'preprocessing')`,
-          [jobId, timestamp],
-        );
-      }
       if (!["finished", "error", "canceled"].includes(String(state))) return;
-      if (state === "finished") {
-        await this.database.query(
-          `update app_private.processing_jobs
-           set state = 'preprocessing', preprocessing_at = coalesce(preprocessing_at, $2)
-           where job_id = $1 and state in ('queued', 'preprocessing')`,
-          [jobId, timestamp],
-        );
-      } else {
+      if (state !== "finished") {
         const code =
           state === "error" ? "PROVIDER_JOB_FAILED" : "PROVIDER_JOB_CANCELLED";
         await this.database.query(

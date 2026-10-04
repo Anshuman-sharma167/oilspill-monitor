@@ -97,3 +97,46 @@
 - Remaining limitation: the recurring Part 6 pilot AOI remains disabled because
   its authenticated openEO credit estimate is still pending. Scheduled Part 8
   polls therefore remain safe no-op runs until that separate gate is satisfied.
+
+## 2026-10-04 — Part 9: idempotent PostgreSQL job queue
+
+- **PASS — implementation:** added one forward-only Part 9 migration with
+  priority-aware `FOR UPDATE SKIP LOCKED` claiming, bounded attempts and leases,
+  database-enforced transitions, state-bound SHA-256 checkpoints, guarded lease
+  recovery, audited human requeue, and provider-job-ID consistency. Added the
+  injectable synthetic worker, recovery and database boundaries, plus a GitHub
+  App dispatcher and a fail-closed one-job workflow. No Part 10 processing,
+  inference, scoring, review UI, or alert delivery was added.
+- **PASS — focused and full checks:** `npm run test:part9` passed 7/7. The final
+  `npm run check` passed 88/88 TypeScript tests and 2/2 Python tests plus all
+  formatting, lint, typing, sample, mock integration, configuration, container,
+  and repository-scan gates. `git diff --check` passed. Node and Python audits
+  reported no known vulnerabilities.
+- **PASS — real PostgreSQL exit gate:** the migration was applied to the
+  existing healthy Supabase project. Eighteen concurrent hosted SQL claim calls
+  competed for six synthetic queued jobs; all six jobs entered preprocessing
+  with six distinct claimers and no duplicate ownership. Hosted crash
+  simulations after claim, after durable provider submission, and after asset
+  checkpoint all passed. Recovery preserved one provider run, reused one
+  immutable checkpoint, and created no candidates or alerts. Persistent
+  synthetic claim rows were deleted and the crash fixtures were rolled back;
+  verification found zero remaining synthetic rows.
+- **PASS — access controls and security:** hosted metadata confirmed the claim
+  index, checkpoint and requeue tables, claim and recovery functions, and denied
+  claim execution to `anon` and `authenticated`. The final Codex Security diff
+  scan reviewed all 13 changed source surfaces with complete coverage and zero
+  reportable findings. Repository scanning checked 135 current files and 205
+  reachable committed blobs.
+- **PASS — hosted database:** the Part 9 migration and a rollback-only synthetic
+  claim/checkpoint/completion flow succeeded. Supabase security advisors report
+  only informational no-policy notices for the deliberately deny-by-default
+  private tables. Performance advisors report informational existing unindexed
+  foreign keys, including the new requeue audit foreign key; no index was added
+  without an observed workload need.
+- **BLOCKED — live GitHub dispatch:** static workflow and dispatcher tests pass,
+  the only caller input is `job_id`, actions are commit-pinned, permissions are
+  minimal, and authorization uses a short-lived GitHub App/OIDC design. The
+  repository has no Part 9 Actions variables or secrets configured, so live
+  dispatch remains disabled and no synthetic workflow was sent.
+- Delivery is on `codex/part-9-postgres-queue`, based on the merged Part 8
+  commit on `origin/main`. The pull request is intentionally not merged.

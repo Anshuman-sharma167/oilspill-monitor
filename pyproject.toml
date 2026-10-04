@@ -36,6 +36,7 @@ exclude_dirs = [".venv", "build", "node_modules"]
 [tool.sqlfluff.core]
 dialect = "postgres"
 max_line_length = 88
+large_file_skip_byte_limit = 0
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
